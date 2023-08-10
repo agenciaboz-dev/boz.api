@@ -7,8 +7,8 @@ const zap = whatsapp
 const sync = async (socket: Socket, clients: ClientBag) => {
     const ready = await zap.client.getState()
     if (ready) {
-        const chats = await zap.client.getChats()
-        socket.emit("zap:ready", chats)
+        
+        socket.emit("zap:ready", await zap.getClient())
     } else {
         const qrcode = await zap.getQrCode()
         console.log({ qrcode })

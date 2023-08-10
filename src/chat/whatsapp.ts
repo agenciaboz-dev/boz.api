@@ -10,6 +10,13 @@ const qrCodePromise = new Promise((resolve) => {
 
 const getQrCode = () => qrCodePromise
 
+const getClient = async () => {
+    const info = client.info
+    const chats = await client.getChats()
+
+    return { info, chats }
+}
+
 const client = new Client({
     authStrategy: new LocalAuth({ dataPath: "whatsapp.auth" }),
     puppeteer: {
@@ -31,9 +38,7 @@ client.on("ready", async () => {
     console.log("whatsapp client is ready")
     const io = getIoInstance()
 
-    const chats = await client.getChats()
-
-    io.emit("zap:ready", chats)
+    io.emit("zap:ready", await getClient())
 })
 
-export default { getQrCode, client }
+export default { getQrCode, getClient, client }
