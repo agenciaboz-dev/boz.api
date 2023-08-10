@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express"
-//import login from "./src/login"
+import user from "./src/user"
 
 export const router = express.Router()
 
-//router.use("/login", login)
+router.use("/user", user)
