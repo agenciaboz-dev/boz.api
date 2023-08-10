@@ -12,7 +12,18 @@ const getQrCode = () => qrCodePromise
 
 const getClient = async () => {
     const info = client.info
-    const chats = await client.getChats()
+    const chatList = await client.getChats()
+
+    const chats = await Promise.all(
+        chatList.map(async (chat) => {
+            const contact = await chat.getContact()
+            const profilePic = await contact.getProfilePicUrl()
+
+            return { ...chat, profilePic }
+        })
+    )
+
+    // chats[0].
 
     return { info, chats }
 }
