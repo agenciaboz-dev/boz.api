@@ -53,11 +53,12 @@ client.on("ready", async () => {
     io.emit("zap:ready", await getClient())
 })
 
-client.on("disconnected", async () => {
+client.on("disconnected", () => {
     const io = getIoInstance()
+    qrCode = ""
 
     io.emit("zap:disconnected")
-    await client.initialize()
+    client.initialize()
 })
 
 export default { getQrCode, getClient, client }
