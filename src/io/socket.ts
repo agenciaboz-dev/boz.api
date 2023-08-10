@@ -3,8 +3,23 @@ import { Client, ClientBag } from "../definitions/client"
 import { User } from "@prisma/client"
 import user from "./user"
 import zap from "./zap"
+import { Server as SocketIoServer } from "socket.io"
+import { Server as HttpServer } from "http"
+import { Server as HttpsServer } from "https"
 
 let clientList: Client[] = []
+let io: SocketIoServer | null = null
+
+export const initializeIoServer = (server: HttpServer | HttpsServer) => {
+    io = new SocketIoServer(server, { cors: { origin: "*" } })
+}
+
+export const getIoInstance = () => {
+    if (!io) {
+        throw new Error("Socket.IO has not been initialized. Please call initializeIoServer first.")
+    }
+    return io
+}
 
 const get = (socket: Socket) => clientList.find((client) => client.socket == socket)
 const find = (id: number) => clientList.find((client) => client.user.id == id)

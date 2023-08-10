@@ -1,4 +1,5 @@
 import { Client, LocalAuth } from "whatsapp-web.js"
+import { getIoInstance } from "../io/socket"
 
 let qrCode = ""
 let qrCodeResolver: (value: string) => void
@@ -21,6 +22,9 @@ client.on("qr", (qr) => {
     qrCodeResolver(qrCode)
     console.log("whatsapp is disconnected. QrCode ready: " + qrCode)
     // qrcode.generate(qr, { small: true })
+
+    const io = getIoInstance()
+    io.emit("zap:qrcode", qrCode)
 })
 
 client.on("ready", () => {
