@@ -2,6 +2,7 @@ import { Socket } from "socket.io"
 import { Client, ClientBag } from "../definitions/client"
 import { User } from "@prisma/client"
 import user from "./user"
+import zap from "./zap"
 
 let clientList: Client[] = []
 
@@ -52,4 +53,9 @@ export const handleSocket = (socket: Socket) => {
     })
 
     socket.on("user:logout", () => user.logout(socket, clients))
+
+
+
+    socket.on("zap:sync", () => zap.sync(socket, clients))
+    
 }
