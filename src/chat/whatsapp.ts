@@ -27,8 +27,13 @@ client.on("qr", (qr) => {
     io.emit("zap:qrcode", qrCode)
 })
 
-client.on("ready", () => {
+client.on("ready", async () => {
     console.log("whatsapp client is ready")
+    const io = getIoInstance()
+
+    const chats = await client.getChats()
+
+    io.emit("zap:ready", chats)
 })
 
 export default { getQrCode, client }
