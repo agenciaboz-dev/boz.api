@@ -49,7 +49,15 @@ client.on("ready", async () => {
     console.log("whatsapp client is ready")
     const io = getIoInstance()
 
+    io.emit("zap:loading", client.info)
     io.emit("zap:ready", await getClient())
+})
+
+client.on("disconnected", async () => {
+    const io = getIoInstance()
+
+    io.emit("zap:disconnected")
+    await client.initialize()
 })
 
 export default { getQrCode, getClient, client }
