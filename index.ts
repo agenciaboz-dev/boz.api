@@ -9,10 +9,11 @@ import http from "http"
 import fs from "fs"
 import { Server } from "socket.io"
 import { handleSocket } from "./src/io/socket"
+import whatsapp from "./src/chat/whatsapp"
 
 dotenv.config()
 
-const app:Express = express()
+const app: Express = express()
 const port = process.env.PORT
 
 app.use(cors())
@@ -20,6 +21,8 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use("/api", router)
+
+whatsapp.client.initialize()
 
 try {
     const server = https.createServer({
