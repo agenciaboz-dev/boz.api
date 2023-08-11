@@ -1,11 +1,13 @@
 import { Socket } from "socket.io"
 import { Client, ClientBag } from "../definitions/client"
-import { User } from "@prisma/client"
+import { PrismaClient, User } from "@prisma/client"
 import user from "./user"
 import zap from "./zap"
 import { Server as SocketIoServer } from "socket.io"
 import { Server as HttpServer } from "http"
 import { Server as HttpsServer } from "https"
+
+const prisma = new PrismaClient()
 
 let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -59,12 +61,15 @@ export const handleSocket = (socket: Socket) => {
         clients.remove(client)
     })
 
-    socket.on("client:sync", (user: User) => {
+    socket.on("client:sync", async (user: User) => {
         clients.add({ socket, user })
         console.log(`new client: ${user.username}`)
         const users = clients.list()
 
         socket.emit("client:sync", users)
+
+        const departments = await prisma.department.findMany({ include: { users: { include: { roles: true, department: true } } } })
+        socket.emit("departments:sync", departments)
     })
 
     socket.on("user:logout", () => user.logout(socket, clients))
