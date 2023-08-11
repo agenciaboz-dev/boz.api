@@ -1,6 +1,7 @@
 import { Socket } from "socket.io"
 import { ClientBag } from "../definitions/client"
 import whatsapp from "../chat/whatsapp"
+import { Chat } from "whatsapp-web.js"
 
 const zap = whatsapp
 
@@ -27,4 +28,10 @@ const getChat = async (socket: Socket, _chat: any) => {
     socket.emit("chat:sync", chat)
 }
 
-export default { sync, getChat }
+const sentMessageIds = new Set<string>()
+const sendMessage = async (socket: Socket, data: { message: string; chat: Chat }) => {
+    const chat = await zap.client.getChatById(data.chat.id._serialized)
+    const message = await chat.sendMessage(data.message)
+}
+
+export default { sync, getChat, sendMessage }

@@ -70,6 +70,9 @@ client.on("disconnected", () => {
 client.on("message_create", async (message) => {
     const io = getIoInstance()
     const chat = await message.getChat()
+
+    console.log(chat.lastMessage.body)
+
     io.emit("message:new", chat)
 })
 

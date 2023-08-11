@@ -99,4 +99,5 @@ export const handleSocket = (socket: Socket) => {
     socket.on("zap:sync", () => zap.sync(socket, clients))
 
     socket.on('chat:sync', chat => zap.getChat(socket, chat))
+    socket.on("message:new", (data) => zap.sendMessage(socket, data))
 }
