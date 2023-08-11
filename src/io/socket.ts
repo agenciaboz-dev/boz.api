@@ -53,16 +53,22 @@ const clients: ClientBag = {
 }
 
 export const handleSocket = (socket: Socket) => {
+    const io = getIoInstance()
+
     console.log(`new connection: ${socket.id}`)
 
     socket.on("disconnect", () => {
         console.log(`disconnected: ${socket.id}`)
+        socket.broadcast.emit("user:disconnect", user)
         const client = clients.get(socket)
         clients.remove(client)
     })
 
     socket.on("client:sync", async (user: User) => {
         clients.add({ socket, user })
+
+        io.emit("user:connect", user)
+
         console.log(`new client: ${user.username}`)
 
         const userList = await prisma.user.findMany({ include: { department: true, roles: true } })
@@ -86,7 +92,7 @@ export const handleSocket = (socket: Socket) => {
         socket.broadcast.emit("user:sync", { ...user, connected: true })
     })
 
-    socket.on("user:logout", () => user.logout(socket, clients))
+    socket.on("user:logout", (data) => user.logout(socket, clients, data))
 
     socket.on("user:new", (newUser: User & { roles: Role[] }) => user.newUser(socket, clients, newUser))
 

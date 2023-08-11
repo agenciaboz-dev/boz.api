@@ -5,7 +5,8 @@ import { saveImage } from "../saveImage"
 
 const prisma = new PrismaClient()
 
-const logout = async (socket: Socket, clients: ClientBag) => {
+const logout = async (socket: Socket, clients: ClientBag, user: User) => {
+    socket.broadcast.emit("user:disconnect", user)
     clients.remove(clients?.get(socket))
 }
 
