@@ -65,7 +65,16 @@ export const handleSocket = (socket: Socket) => {
         clients.add({ socket, user })
         console.log(`new client: ${user.username}`)
 
-        const users = await prisma.user.findMany({ include: { department: true, roles: true } })
+        const userList = await prisma.user.findMany({ include: { department: true, roles: true } })
+        const users = userList.map((user) => {
+            if (clients.find(user.id)) {
+                console.log(`user ${user.username} is connected`)
+                return { ...user, connected: true }
+            }
+
+            return user
+        })
+
         socket.emit("client:sync", users)
 
         const departments = await prisma.department.findMany({ include: { users: { include: { roles: true, department: true } } } })
@@ -73,6 +82,8 @@ export const handleSocket = (socket: Socket) => {
 
         const roles = await prisma.role.findMany({ include: { users: { include: { roles: true, department: true } } } })
         socket.emit("roles:sync", roles)
+
+        socket.broadcast.emit("user:sync", { ...user, connected: true })
     })
 
     socket.on("user:logout", () => user.logout(socket, clients))
