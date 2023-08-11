@@ -97,4 +97,6 @@ export const handleSocket = (socket: Socket) => {
     socket.on("user:new", (newUser: User & { roles: Role[] }) => user.newUser(socket, clients, newUser))
 
     socket.on("zap:sync", () => zap.sync(socket, clients))
+
+    socket.on('chat:sync', chat => zap.getChat(socket, chat))
 }

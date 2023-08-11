@@ -14,18 +14,18 @@ const getClient = async () => {
     const info = client.info
     const chatList = await client.getChats()
 
-    const chats = await Promise.all(
-        chatList.map(async (chat) => {
-            const contact = await chat.getContact()
-            const profilePic = await contact.getProfilePicUrl()
+    // const chats = await Promise.all(
+    //     chatList.map(async (chat) => {
+    //         const contact = await chat.getContact()
+    //         const profilePic = await contact.getProfilePicUrl()
 
-            return { ...chat, profilePic }
-        })
-    )
+    //         return { ...chat, profilePic }
+    //     })
+    // )
 
     // chats[0].
 
-    return { info, chats }
+    return { info, chats: chatList }
 }
 
 const client = new Client({
@@ -59,6 +59,10 @@ client.on("disconnected", () => {
 
     io.emit("zap:disconnected")
     client.initialize()
+})
+
+client.on("message", (message) => {
+    message.getChat()
 })
 
 export default { getQrCode, getClient, client }
