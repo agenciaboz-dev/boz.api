@@ -70,6 +70,9 @@ export const handleSocket = (socket: Socket) => {
 
         const departments = await prisma.department.findMany({ include: { users: { include: { roles: true, department: true } } } })
         socket.emit("departments:sync", departments)
+
+        const roles = await prisma.role.findMany({ include: { users: { include: { roles: true, department: true } } } })
+        socket.emit("roles:sync", roles)
     })
 
     socket.on("user:logout", () => user.logout(socket, clients))
