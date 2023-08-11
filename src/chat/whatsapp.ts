@@ -61,8 +61,10 @@ client.on("disconnected", () => {
     client.initialize()
 })
 
-client.on("message", (message) => {
-    message.getChat()
+client.on("message", async (message) => {
+    const io = getIoInstance()
+    const chat = await message.getChat()
+    io.emit("message:new", chat)
 })
 
 export default { getQrCode, getClient, client }
