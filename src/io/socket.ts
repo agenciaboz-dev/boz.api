@@ -64,8 +64,8 @@ export const handleSocket = (socket: Socket) => {
     socket.on("client:sync", async (user: User) => {
         clients.add({ socket, user })
         console.log(`new client: ${user.username}`)
-        const users = clients.list()
 
+        const users = await prisma.user.findMany({ include: { department: true, roles: true } })
         socket.emit("client:sync", users)
 
         const departments = await prisma.department.findMany({ include: { users: { include: { roles: true, department: true } } } })
