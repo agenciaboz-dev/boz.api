@@ -1,6 +1,6 @@
 import { Socket } from "socket.io"
 import { Client, ClientBag } from "../definitions/client"
-import { PrismaClient, User } from "@prisma/client"
+import { PrismaClient, Role, User } from "@prisma/client"
 import user from "./user"
 import zap from "./zap"
 import { Server as SocketIoServer } from "socket.io"
@@ -77,8 +77,7 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("user:logout", () => user.logout(socket, clients))
 
-
+    socket.on("user:new", (newUser: User & { roles: Role[] }) => user.newUser(socket, clients, newUser))
 
     socket.on("zap:sync", () => zap.sync(socket, clients))
-    
 }
