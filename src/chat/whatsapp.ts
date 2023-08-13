@@ -73,7 +73,7 @@ client.on("message_create", async (message) => {
 
     console.log(chat.lastMessage.body)
 
-    io.emit("message:new", chat)
+    io.emit("message:new", { chat, message })
 })
 
 
