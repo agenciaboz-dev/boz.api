@@ -25,6 +25,7 @@ const newUser = async (socket: Socket, clients: ClientBag, newUser: any) => {
             departmentId: newUser.departmentId,
             roles: { connect: roles.map((role) => ({ id: role.id })) },
         },
+        include: { department: true, roles: true },
     })
 
     if (newUser.image) saveImage(`users/${user.id}/images`, newUser.image, "profilePic")
