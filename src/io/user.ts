@@ -27,7 +27,7 @@ const newUser = async (socket: Socket, clients: ClientBag, newUser: any) => {
         },
     })
 
-    saveImage(`users/${user.id}/images`, newUser.image, "profilePic")
+    if (newUser.image) saveImage(`users/${user.id}/images`, newUser.image, "profilePic")
 
     socket.emit("user:new:success", user)
     socket.broadcast.emit("user:new", user)
