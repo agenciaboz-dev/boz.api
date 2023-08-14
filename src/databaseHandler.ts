@@ -1,4 +1,5 @@
 import { PrismaClient, Role } from "@prisma/client"
+import { NewCustomerForm } from "./definitions/NewCustomerForm"
 
 const prisma = new PrismaClient()
 
@@ -54,6 +55,15 @@ const role = {
 
 const customer = {
     list: async () => await prisma.customer.findMany({ include: inclusions.customer }),
+    new: async (data: NewCustomerForm) =>
+        await prisma.customer.create({
+            data: {
+                name: data.name,
+                recomendations: data.recomendations,
+                active: true,
+                services: { connect: data.services.map((service) => ({ id: service.id })) },
+            },
+        }),
 }
 
 const service = {
