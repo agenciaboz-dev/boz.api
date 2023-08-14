@@ -1,8 +1,8 @@
 import express, { Express, Request, Response } from "express"
-import { PrismaClient } from "@prisma/client"
 import { getIoInstance } from "../io/socket"
+import databaseHandler from "../databaseHandler"
 const router = express.Router()
-const prisma = new PrismaClient()
+const prisma = databaseHandler
 
 router.get("/", async (request: Request, response: Response) => {
     response.json({ test: "success" })
@@ -11,14 +11,7 @@ router.get("/", async (request: Request, response: Response) => {
 router.post("/login", async (request: Request, response: Response) => {
     const data = request.body
 
-    const user = await prisma.user.findFirst({
-        where: {
-            OR: [{ email: data.login }, { username: data.login }, { cpf: data.login }],
-            AND: { password: data.password },
-        },
-        include: { roles: true, department: true },
-    })
-
+    const user = await prisma.user.login(data)
     response.json(user)
 })
 
@@ -26,7 +19,7 @@ router.post("/delete", async (request: Request, response: Response) => {
     const io = getIoInstance()
     const data = request.body
 
-    const user = await prisma.user.delete({ where: { id: data.id } })
+    const user = await prisma.user.delete(data)
 
     response.json(user)
     io.emit("user:delete", user)

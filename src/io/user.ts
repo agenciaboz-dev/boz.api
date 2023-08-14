@@ -1,9 +1,10 @@
 import { Socket } from "socket.io"
 import { ClientBag } from "../definitions/client"
-import { PrismaClient, Role, User } from "@prisma/client"
+import { Role, User } from "@prisma/client"
 import { saveImage } from "../saveImage"
+import databaseHandler from "../databaseHandler"
 
-const prisma = new PrismaClient()
+const prisma = databaseHandler
 
 const logout = async (socket: Socket, clients: ClientBag, user: User) => {
     socket.broadcast.emit("user:disconnect", user)
@@ -11,27 +12,16 @@ const logout = async (socket: Socket, clients: ClientBag, user: User) => {
 }
 
 const newUser = async (socket: Socket, clients: ClientBag, newUser: any) => {
-    const splittedBirth = newUser.birth.split("/") as string[]
-    const roles = newUser.roles as Role[]
+    const user = await prisma.user.new(newUser)
 
-    const user = await prisma.user.create({
-        data: {
-            birth: new Date(`${splittedBirth[1]}/${splittedBirth[0]}/${splittedBirth[2]}`),
-            cpf: newUser.cpf,
-            email: newUser.email,
-            name: newUser.name,
-            password: newUser.username,
-            username: newUser.username,
-            departmentId: newUser.departmentId,
-            roles: { connect: roles.map((role) => ({ id: role.id })) },
-        },
-        include: { department: true, roles: true },
-    })
+    if (user) {
+        if (newUser.image) saveImage(`users/${user.id}/images`, newUser.image, "profilePic")
 
-    if (newUser.image) saveImage(`users/${user.id}/images`, newUser.image, "profilePic")
-
-    socket.emit("user:new:success", user)
-    socket.broadcast.emit("user:new", user)
+        socket.emit("user:new:success", user)
+        socket.broadcast.emit("user:new", user)
+    } else {
+        socket.emit("user:new:failed")
+    }
 }
 
 export default { logout, newUser }

@@ -1,13 +1,14 @@
 import { Socket } from "socket.io"
 import { Client, ClientBag } from "../definitions/client"
-import { PrismaClient, Role, User } from "@prisma/client"
+import { Role, User } from "@prisma/client"
 import user from "./user"
 import zap from "./zap"
 import { Server as SocketIoServer } from "socket.io"
 import { Server as HttpServer } from "http"
 import { Server as HttpsServer } from "https"
+import databaseHandler from "../databaseHandler"
 
-const prisma = new PrismaClient()
+const prisma = databaseHandler
 
 let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -71,7 +72,7 @@ export const handleSocket = (socket: Socket) => {
 
         console.log(`new client: ${user.username}`)
 
-        const userList = await prisma.user.findMany({ include: { department: true, roles: true } })
+        const userList = await prisma.user.list()
         const users = userList.map((user) => {
             if (clients.find(user.id)) {
                 console.log(`user ${user.username} is connected`)
@@ -83,10 +84,10 @@ export const handleSocket = (socket: Socket) => {
 
         socket.emit("client:sync", users)
 
-        const departments = await prisma.department.findMany({ include: { users: true } })
+        const departments = await prisma.department.list()
         socket.emit("departments:sync", departments)
 
-        const roles = await prisma.role.findMany({ include: { users: true } })
+        const roles = await prisma.role.list()
         socket.emit("roles:sync", roles)
 
         socket.broadcast.emit("user:sync", { ...user, connected: true })
