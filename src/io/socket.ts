@@ -7,6 +7,7 @@ import { Server as SocketIoServer } from "socket.io"
 import { Server as HttpServer } from "http"
 import { Server as HttpsServer } from "https"
 import databaseHandler from "../databaseHandler"
+import client from "./client"
 
 const prisma = databaseHandler
 
@@ -65,33 +66,7 @@ export const handleSocket = (socket: Socket) => {
         clients.remove(client)
     })
 
-    socket.on("client:sync", async (user: User) => {
-        clients.add({ socket, user })
-
-        io.emit("user:connect", user)
-
-        console.log(`new client: ${user.username}`)
-
-        const userList = await prisma.user.list()
-        const users = userList.map((user) => {
-            if (clients.find(user.id)) {
-                console.log(`user ${user.username} is connected`)
-                return { ...user, connected: true }
-            }
-
-            return user
-        })
-
-        socket.emit("client:sync", users)
-
-        const departments = await prisma.department.list()
-        socket.emit("departments:sync", departments)
-
-        const roles = await prisma.role.list()
-        socket.emit("roles:sync", roles)
-
-        socket.broadcast.emit("user:sync", { ...user, connected: true })
-    })
+    socket.on("client:sync", async (user: User) => client.sync(user, io, clients, socket))
 
     socket.on("user:logout", (data) => user.logout(socket, clients, data))
 
@@ -99,6 +74,6 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("zap:sync", () => zap.sync(socket, clients))
 
-    socket.on('chat:sync', chat => zap.getChat(socket, chat))
+    socket.on("chat:sync", (chat) => zap.getChat(socket, chat))
     socket.on("message:new", (data) => zap.sendMessage(socket, data))
 }
