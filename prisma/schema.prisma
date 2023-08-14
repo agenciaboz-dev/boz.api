@@ -36,3 +36,18 @@ model Role {
 
     users           User[]
 }
+
+model Customer {
+    id              Int         @id @default(autoincrement())
+    name            String
+    active          Boolean
+    recomendations  String      @db.Text
+    services        Service[]
+}
+
+model Service {
+    id              Int         @id @default(autoincrement())
+    tag             String      @unique
+    name            String
+    customers       Customer[]
+}
