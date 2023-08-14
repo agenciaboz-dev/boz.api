@@ -61,12 +61,13 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("disconnect", () => {
         console.log(`disconnected: ${socket.id}`)
-        socket.broadcast.emit("user:disconnect", user)
+        const user = clients.get(socket)?.user
+        io.emit("user:disconnect", user)
         const client = clients.get(socket)
         clients.remove(client)
     })
 
-    socket.on("client:sync", async (user: User) => client.sync(user, io, clients, socket))
+    socket.on("client:sync", async (user: User) => client.sync(user, clients, socket))
 
     socket.on("user:logout", (data) => user.logout(socket, clients, data))
 

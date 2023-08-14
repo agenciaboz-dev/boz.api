@@ -3,11 +3,13 @@ import { ClientBag } from "../definitions/client"
 import { Role, User } from "@prisma/client"
 import { saveImage } from "../saveImage"
 import databaseHandler from "../databaseHandler"
+import { getIoInstance } from "./socket"
 
 const prisma = databaseHandler
 
 const logout = async (socket: Socket, clients: ClientBag, user: User) => {
-    socket.broadcast.emit("user:disconnect", user)
+    const io = getIoInstance()
+    io.emit("user:disconnect", user)
     clients.remove(clients?.get(socket))
 }
 
