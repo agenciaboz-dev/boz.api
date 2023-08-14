@@ -58,6 +58,14 @@ const customer = {
 
 const service = {
     list: async () => await prisma.service.findMany({ include: inclusions.service }),
+    new: async (data: NewServiceForm) =>
+        await prisma.service.create({
+            data: {
+                name: data.name,
+                tag: data.tag,
+            },
+            include: inclusions.service,
+        }),
 }
 
 export default { user, department, role, service, customer }
