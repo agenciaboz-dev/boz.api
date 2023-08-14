@@ -6,6 +6,8 @@ const inclusions = {
     user: { roles: true, department: true },
     department: {},
     role: {},
+    service: {},
+    customer: { services: true },
 }
 
 const user = {
@@ -50,4 +52,12 @@ const role = {
     list: async () => await prisma.role.findMany({ include: inclusions.role }),
 }
 
-export default { user, department, role }
+const customer = {
+    list: async () => await prisma.customer.findMany({ include: inclusions.customer }),
+}
+
+const service = {
+    list: async () => await prisma.service.findMany({ include: inclusions.service }),
+}
+
+export default { user, department, role, service, customer }
