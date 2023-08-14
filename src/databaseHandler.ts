@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from "@prisma/client"
+import { Customer, PrismaClient, Role } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 
 const prisma = new PrismaClient()
@@ -63,6 +63,12 @@ const customer = {
                 active: true,
                 services: { connect: data.services.map((service) => ({ id: service.id })) },
             },
+        }),
+    toggleStatus: async (customer: Customer) =>
+        await prisma.customer.update({
+            data: { active: !customer.active },
+            where: { id: customer.id },
+            include: inclusions.customer,
         }),
 }
 
