@@ -8,7 +8,7 @@ const prisma = databaseHandler
 router.post("/username", async (request: Request, response: Response) => {
     const data = request.body
 
-    const user = prisma.user.find.username(data.username)
+    const user = await prisma.user.find.username(data.username)
     response.json(user)
 })
 
