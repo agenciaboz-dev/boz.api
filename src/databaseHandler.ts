@@ -63,6 +63,7 @@ const customer = {
                 active: true,
                 services: { connect: data.services.map((service) => ({ id: service.id })) },
             },
+            include: inclusions.customer,
         }),
     toggleStatus: async (customer: Customer) =>
         await prisma.customer.update({
