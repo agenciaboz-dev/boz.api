@@ -46,11 +46,14 @@ const user = {
         })
     },
 
-    update: async (data: NewUserForm) => {
+    update: async (data: NewUserForm & { id: number }) => {
         const splittedBirth = data.birth.split("/")
         const roles = data.roles
 
-        return await prisma.user.create({
+        return await prisma.user.update({
+            where: {
+                id: data.id,
+            },
             data: {
                 birth: new Date(`${splittedBirth[1]}/${splittedBirth[0]}/${splittedBirth[2]}`),
                 cpf: data.cpf,
@@ -59,7 +62,7 @@ const user = {
                 password: data.username,
                 username: data.username,
                 departmentId: data.departmentId,
-                roles: { connect: roles.map((role) => ({ id: role.id })) },
+                roles: { set: [], connect: roles.map((role) => ({ id: role.id })) },
             },
             include: inclusions.user,
         })
