@@ -71,7 +71,8 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("user:logout", (data) => user.logout(socket, clients, data))
 
-    socket.on("user:new", (newUser: User & { roles: Role[] }) => user.newUser(socket, clients, newUser))
+    socket.on("user:new", (newUser: User & { roles: Role[] }) => user.newUser(socket, newUser))
+    socket.on("user:update", (data: User & { roles: Role[] }) => user.update(socket, data))
 
     socket.on("zap:sync", () => zap.sync(socket, clients))
 

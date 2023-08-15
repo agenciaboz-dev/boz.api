@@ -46,6 +46,25 @@ const user = {
         })
     },
 
+    update: async (data: NewUserForm) => {
+        const splittedBirth = data.birth.split("/")
+        const roles = data.roles
+
+        return await prisma.user.create({
+            data: {
+                birth: new Date(`${splittedBirth[1]}/${splittedBirth[0]}/${splittedBirth[2]}`),
+                cpf: data.cpf,
+                email: data.email,
+                name: data.name,
+                password: data.username,
+                username: data.username,
+                departmentId: data.departmentId,
+                roles: { connect: roles.map((role) => ({ id: role.id })) },
+            },
+            include: inclusions.user,
+        })
+    },
+
     delete: async (data: { id: number | string }) => await prisma.user.delete({ where: { id: Number(data.id) } }),
 }
 
