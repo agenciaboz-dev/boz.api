@@ -23,6 +23,10 @@ const user = {
 
     list: async () => await prisma.user.findMany({ include: inclusions.user }),
 
+    find: {
+        username: async (username: string) => await prisma.user.findFirst({ where: { username }, include: inclusions.user }),
+    },
+
     new: async (data: NewUserForm) => {
         const splittedBirth = data.birth.split("/")
         const roles = data.roles

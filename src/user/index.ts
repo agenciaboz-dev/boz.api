@@ -1,6 +1,8 @@
 import express, { Express, Request, Response } from "express"
 import { getIoInstance } from "../io/socket"
 import databaseHandler from "../databaseHandler"
+import find from "./find"
+
 const router = express.Router()
 const prisma = databaseHandler
 
@@ -24,5 +26,7 @@ router.post("/delete", async (request: Request, response: Response) => {
     response.json(user)
     io.emit("user:delete", user)
 })
+
+router.use("/find", find)
 
 export default router
