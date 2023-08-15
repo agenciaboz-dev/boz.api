@@ -14,6 +14,9 @@ const sync = async (user: User, clients: ClientBag, socket: Socket) => {
 
     console.log(`new client: ${user.username}`)
 
+    const connected = clients.list()
+    socket.emit("connected:sync", connected)
+
     const users = await prisma.user.list()
     socket.emit("client:sync", users)
 
