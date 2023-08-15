@@ -10,10 +10,10 @@ router.post("/new", async (request: Request, response: Response) => {
 
     const data = request.body
 
-    const service = await prisma.service.new(data)
-    if (service) {
-        io.emit("service:new", service)
-        response.json(service)
+    const role = await prisma.role.new(data)
+    if (role) {
+        io.emit("role:new", role)
+        response.json(role)
     }
 })
 

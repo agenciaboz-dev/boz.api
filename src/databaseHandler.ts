@@ -74,10 +74,12 @@ const user = {
 
 const department = {
     list: async () => await prisma.department.findMany({ include: inclusions.department }),
+    new: async (department: NewServiceForm) => await prisma.department.create({ data: { name: department.name }, include: inclusions.department }),
 }
 
 const role = {
     list: async () => await prisma.role.findMany({ include: inclusions.role }),
+    new: async (role: NewServiceForm) => await prisma.role.create({ data: { name: role.name, tag: role.tag }, include: inclusions.role }),
 }
 
 const customer = {

@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from "express"
+import role from "./role"
 import databaseHandler from "../databaseHandler"
 import { getIoInstance } from "../io/socket"
 
@@ -10,11 +11,13 @@ router.post("/new", async (request: Request, response: Response) => {
 
     const data = request.body
 
-    const service = await prisma.service.new(data)
-    if (service) {
-        io.emit("service:new", service)
-        response.json(service)
+    const department = await prisma.department.new(data)
+    if (department) {
+        io.emit("department:new", department)
+        response.json(department)
     }
 })
+
+router.use("/role", role)
 
 export default router
