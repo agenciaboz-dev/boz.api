@@ -16,6 +16,7 @@ model User {
     name            String
     cpf             String
     birth           DateTime    @db.Date
+    phone           String      @default("")
 
     departmentId    Int
     department      Department  @relation(fields: [departmentId], references: [id])
