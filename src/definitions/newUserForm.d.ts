@@ -5,6 +5,7 @@ declare interface NewUserForm {
     email: string
     name: string
     password: string
+    phone: string
     username: string
     departmentId: number
 
