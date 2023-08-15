@@ -61,7 +61,6 @@ const user = {
                 email: data.email,
                 phone: data.phone,
                 name: data.name,
-                password: data.username,
                 username: data.username,
                 departmentId: data.departmentId,
                 roles: { set: [], connect: roles.map((role) => ({ id: role.id })) },
