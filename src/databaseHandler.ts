@@ -28,12 +28,12 @@ const user = {
     },
 
     new: async (data: NewUserForm) => {
-        const [day, month, year] = "03/08/1998".split("/").map(Number)
+        const birth = data.birth.split("/").reverse().join("/")
         const roles = data.roles
 
         return await prisma.user.create({
             data: {
-                birth: new Date(Date.UTC(year, month - 1, day)),
+                birth: new Date(birth),
                 cpf: data.cpf,
                 email: data.email,
                 name: data.name,
@@ -48,7 +48,7 @@ const user = {
     },
 
     update: async (data: NewUserForm & { id: number }) => {
-        const [day, month, year] = "03/08/1998".split("/").map(Number)
+        const birth = data.birth.split("/").reverse().join("/")
         const roles = data.roles
 
         return await prisma.user.update({
@@ -56,7 +56,7 @@ const user = {
                 id: data.id,
             },
             data: {
-                birth: new Date(Date.UTC(year, month - 1, day)),
+                birth: new Date(birth),
                 cpf: data.cpf,
                 email: data.email,
                 phone: data.phone,
