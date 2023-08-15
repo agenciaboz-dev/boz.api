@@ -5,6 +5,10 @@ import { getIoInstance } from "../io/socket"
 const router = express.Router()
 const prisma = databaseHandler
 
+router.get("/new", async (request: Request, response: Response) => {
+    response.json({ success: true })
+})
+
 router.post("/new", async (request: Request, response: Response) => {
     const io = getIoInstance()
 
