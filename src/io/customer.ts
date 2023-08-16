@@ -17,4 +17,14 @@ const update = async (socket: Socket, data: Customer & { services: Service[] }) 
     }
 }
 
-export default { update }
+const remove = async (socket: Socket, data: Customer) => {
+    const io = getIoInstance()
+
+    const customer = await prisma.customer.delete(data)
+    if (customer) {
+        io.emit("customer:delete", customer)
+        socket.emit("customer:delete:success", customer)
+    }
+}
+
+export default { update, remove }

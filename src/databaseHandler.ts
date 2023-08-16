@@ -111,6 +111,10 @@ const customer = {
             where: { id: data.id },
             include: inclusions.customer,
         }),
+    delete: async (data: Customer) =>
+        await prisma.customer.delete({
+            where: { id: data.id },
+        }),
     toggleStatus: async (customer: Customer) =>
         await prisma.customer.update({
             data: { active: !customer.active },

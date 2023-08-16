@@ -79,6 +79,7 @@ export const handleSocket = (socket: Socket) => {
     socket.on("user:status:update", (data: User & { status: number }) => user.status(socket, data, clients))
 
     socket.on("customer:update", (data: Customer & { services: Service[] }) => customer.update(socket, data))
+    socket.on("customer:delete", (data: Customer) => customer.remove(socket, data))
 
     socket.on("zap:sync", () => zap.sync(socket, clients))
 
