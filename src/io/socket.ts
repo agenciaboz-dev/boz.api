@@ -9,6 +9,7 @@ import { Server as HttpsServer } from "https"
 import databaseHandler from "../databaseHandler"
 import client from "./client"
 import customer from "./customer"
+import department from "./department"
 
 const prisma = databaseHandler
 
@@ -83,4 +84,6 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("chat:sync", (chat) => zap.getChat(socket, chat))
     socket.on("message:new", (data) => zap.sendMessage(socket, data))
+
+    socket.on("department:update", (data) => department.update(socket, data))
 }

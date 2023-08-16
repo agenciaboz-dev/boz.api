@@ -1,4 +1,4 @@
-import { Customer, PrismaClient, Role, Service } from "@prisma/client"
+import { Customer, Department, PrismaClient, Role, Service } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 
 const prisma = new PrismaClient()
@@ -75,6 +75,12 @@ const user = {
 const department = {
     list: async () => await prisma.department.findMany({ include: inclusions.department }),
     new: async (department: NewServiceForm) => await prisma.department.create({ data: { name: department.name }, include: inclusions.department }),
+    update: async (data: Department) =>
+        await prisma.department.update({
+            where: { id: data.id },
+            data: { name: data.name },
+            include: inclusions.department,
+        }),
 }
 
 const role = {
