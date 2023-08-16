@@ -15,7 +15,7 @@ let clientList: Client[] = []
 let io: SocketIoServer | null = null
 
 export const initializeIoServer = (server: HttpServer | HttpsServer) => {
-    io = new SocketIoServer(server, { cors: { origin: "*" } })
+    io = new SocketIoServer(server, { cors: { origin: "*" }, maxHttpBufferSize: 1e8 })
 }
 
 export const getIoInstance = () => {
