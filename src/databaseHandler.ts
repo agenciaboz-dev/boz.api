@@ -81,6 +81,10 @@ const department = {
             data: { name: data.name },
             include: inclusions.department,
         }),
+    delete: async (data: Department) =>
+        await prisma.department.delete({
+            where: { id: data.id },
+        }),
 }
 
 const role = {

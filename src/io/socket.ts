@@ -92,4 +92,5 @@ export const handleSocket = (socket: Socket) => {
     socket.on("message:new", (data) => zap.sendMessage(socket, data))
 
     socket.on("department:update", (data) => department.update(socket, data))
+    socket.on("department:delete", (data) => department.remove(socket, data))
 }

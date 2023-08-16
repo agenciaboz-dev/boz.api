@@ -15,4 +15,14 @@ const update = async (socket: Socket, data: Department) => {
     }
 }
 
-export default { update }
+const remove = async (socket: Socket, data: Department) => {
+    const io = getIoInstance()
+
+    const department = await prisma.department.update(data)
+    if (department) {
+        io.emit("department:delete", department)
+        socket.emit("department:delete:success")
+    }
+}
+
+export default { update, remove }
