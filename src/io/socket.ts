@@ -84,6 +84,7 @@ export const handleSocket = (socket: Socket) => {
     socket.on("customer:delete", (data) => customer.remove(socket, data))
 
     socket.on("service:update", (data) => service.update(socket, data))
+    socket.on("service:delete", (data) => service.remove(socket, data))
 
     socket.on("zap:sync", () => zap.sync(socket, clients))
 

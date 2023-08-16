@@ -139,6 +139,10 @@ const service = {
             data: { name: data.name, tag: data.tag },
             include: inclusions.service,
         }),
+    delete: async (data: Service) =>
+        await prisma.service.delete({
+            where: { id: data.id },
+        }),
 }
 
 export default { user, department, role, service, customer }
