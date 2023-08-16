@@ -133,6 +133,12 @@ const service = {
             },
             include: inclusions.service,
         }),
+    update: async (data: Service) =>
+        await prisma.service.update({
+            where: { id: data.id },
+            data: { name: data.name, tag: data.tag },
+            include: inclusions.service,
+        }),
 }
 
 export default { user, department, role, service, customer }

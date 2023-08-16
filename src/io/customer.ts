@@ -6,8 +6,6 @@ import { saveImage } from "../saveImage"
 
 const prisma = databaseHandler
 
-const newService = (data: NewServiceForm) => {}
-
 const create = async (socket: Socket, data: Customer & { services: Service[]; image: ArrayBuffer }) => {
     const io = getIoInstance()
 

@@ -10,6 +10,7 @@ import databaseHandler from "../databaseHandler"
 import client from "./client"
 import customer from "./customer"
 import department from "./department"
+import service from "./service"
 
 const prisma = databaseHandler
 
@@ -81,6 +82,8 @@ export const handleSocket = (socket: Socket) => {
     socket.on("customer:new", (data) => customer.create(socket, data))
     socket.on("customer:update", (data) => customer.update(socket, data))
     socket.on("customer:delete", (data) => customer.remove(socket, data))
+
+    socket.on("service:update", (data) => service.update(socket, data))
 
     socket.on("zap:sync", () => zap.sync(socket, clients))
 
