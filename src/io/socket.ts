@@ -1,6 +1,6 @@
 import { Socket } from "socket.io"
 import { Client, ClientBag } from "../definitions/client"
-import { Role, User } from "@prisma/client"
+import { Customer, Role, Service, User } from "@prisma/client"
 import user from "./user"
 import zap from "./zap"
 import { Server as SocketIoServer } from "socket.io"
@@ -8,6 +8,7 @@ import { Server as HttpServer } from "http"
 import { Server as HttpsServer } from "https"
 import databaseHandler from "../databaseHandler"
 import client from "./client"
+import customer from "./customer"
 
 const prisma = databaseHandler
 
@@ -74,9 +75,10 @@ export const handleSocket = (socket: Socket) => {
     socket.on("user:new", (newUser: User & { roles: Role[] }) => user.newUser(socket, newUser))
     socket.on("user:update", (data: User & { roles: Role[] }) => user.update(socket, data))
 
+    socket.on("customer:update", (data: Customer & { services: Service[] }) => customer.update(data))
+
     socket.on("zap:sync", () => zap.sync(socket, clients))
 
     socket.on("chat:sync", (chat) => zap.getChat(socket, chat))
     socket.on("message:new", (data) => zap.sendMessage(socket, data))
-
 }
