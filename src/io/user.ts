@@ -39,4 +39,13 @@ const update = async (socket: Socket, data: any) => {
     }
 }
 
-export default { logout, newUser, update }
+const status = (socket: Socket, user: User & { status: number }, clients: ClientBag) => {
+    const io = getIoInstance()
+    const client = clients.get(socket)
+    if (client) {
+        clients.update(client, user)
+        io.emit("user:status:update", user)
+    }
+}
+
+export default { logout, newUser, update, status }

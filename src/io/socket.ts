@@ -43,7 +43,8 @@ const add = (client: Client) => {
     clientList.push(client)
 }
 
-const update = (client: Client, user: User) => (clientList = [...clientList.filter((item) => item.socket != client.socket), { ...client, user }])
+const update = (client: Client, user: User & { status: number }) =>
+    (clientList = [...clientList.filter((item) => item.socket != client.socket), { ...client, user }])
 
 const clients: ClientBag = {
     get,
@@ -68,12 +69,13 @@ export const handleSocket = (socket: Socket) => {
         clients.remove(client)
     })
 
-    socket.on("client:sync", async (user: User) => client.sync(user, clients, socket))
+    socket.on("client:sync", async (user: User & { status: number }) => client.sync(user, clients, socket))
 
     socket.on("user:logout", (data) => user.logout(socket, clients, data))
 
     socket.on("user:new", (newUser: User & { roles: Role[] }) => user.newUser(socket, newUser))
     socket.on("user:update", (data: User & { roles: Role[] }) => user.update(socket, data))
+    socket.on("user:status:update", (data: User & { status: number }) => user.status(socket, data, clients))
 
     socket.on("customer:update", (data: Customer & { services: Service[] }) => customer.update(data))
 
