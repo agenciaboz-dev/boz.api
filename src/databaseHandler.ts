@@ -34,10 +34,10 @@ const user = {
         return await prisma.user.create({
             data: {
                 birth: new Date(birth),
-                cpf: data.cpf,
+                cpf: data.cpf.replace(/\D/g, ""),
                 email: data.email,
                 name: data.name,
-                phone: data.phone,
+                phone: data.phone.replace(/\D/g, ""),
                 password: data.username,
                 username: data.username,
                 departmentId: data.departmentId,
@@ -57,9 +57,9 @@ const user = {
             },
             data: {
                 birth: new Date(birth),
-                cpf: data.cpf,
+                cpf: data.cpf.replace(/\D/g, ""),
                 email: data.email,
-                phone: data.phone,
+                phone: data.phone.replace(/\D/g, ""),
                 name: data.name,
                 username: data.username,
                 departmentId: data.departmentId,
