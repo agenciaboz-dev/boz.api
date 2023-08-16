@@ -6,7 +6,7 @@ import { getIoInstance } from "./socket"
 
 const prisma = databaseHandler
 
-const sync = async (user: User, clients: ClientBag, socket: Socket) => {
+const sync = async (user: User & { status: number }, clients: ClientBag, socket: Socket) => {
     const io = getIoInstance()
 
     clients.add({ socket, user })

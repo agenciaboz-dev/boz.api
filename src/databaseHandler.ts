@@ -1,4 +1,4 @@
-import { Customer, PrismaClient, Role } from "@prisma/client"
+import { Customer, PrismaClient, Role, Service } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 
 const prisma = new PrismaClient()
@@ -34,10 +34,10 @@ const user = {
         return await prisma.user.create({
             data: {
                 birth: new Date(birth),
-                cpf: data.cpf,
+                cpf: data.cpf.replace(/\D/g, ""),
                 email: data.email,
                 name: data.name,
-                phone: data.phone,
+                phone: data.phone.replace(/\D/g, ""),
                 password: data.username,
                 username: data.username,
                 departmentId: data.departmentId,
@@ -57,9 +57,9 @@ const user = {
             },
             data: {
                 birth: new Date(birth),
-                cpf: data.cpf,
+                cpf: data.cpf.replace(/\D/g, ""),
                 email: data.email,
-                phone: data.phone,
+                phone: data.phone.replace(/\D/g, ""),
                 name: data.name,
                 username: data.username,
                 departmentId: data.departmentId,
@@ -92,6 +92,17 @@ const customer = {
                 active: true,
                 services: { connect: data.services.map((service) => ({ id: service.id })) },
             },
+            include: inclusions.customer,
+        }),
+    update: async (data: Customer & { services: Service[] }) =>
+        await prisma.customer.update({
+            data: {
+                active: data.active,
+                name: data.name,
+                recomendations: data.recomendations,
+                services: { set: [], connect: data.services.map((service) => ({ id: service.id })) },
+            },
+            where: { id: data.id },
             include: inclusions.customer,
         }),
     toggleStatus: async (customer: Customer) =>

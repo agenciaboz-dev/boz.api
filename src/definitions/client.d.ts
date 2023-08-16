@@ -3,7 +3,7 @@ import { Socket } from "socket.io"
 
 declare interface Client {
     socket: Socket
-    user: User
+    user: User & { status: number }
 }
 
 declare interface ClientBag {
@@ -13,5 +13,5 @@ declare interface ClientBag {
     list: () => User[]
     add: (client: Client) => void
     remove: (client: Client | undefined) => void
-    update: (client: Client, user: User) => Client[]
+    update: (client: Client, user: User & { status: number }) => Client[]
 }
