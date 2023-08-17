@@ -10,6 +10,7 @@ import client from "./client"
 import customer from "./customer"
 import department from "./department"
 import service from "./service"
+import qrcode from "./qrcode"
 
 let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -89,4 +90,6 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("department:update", (data) => department.update(socket, data))
     socket.on("department:delete", (data) => department.remove(socket, data))
+
+    socket.on("qrcode:new", (data) => qrcode.new(socket, data))
 }

@@ -1,6 +1,7 @@
 import { Customer, Department, PrismaClient, Role, Service, User } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 import { getIoInstance } from "./io/socket"
+import { NewQrCodeForm } from "./definitions/NewQrCodeForm"
 
 const prisma = new PrismaClient()
 
@@ -165,4 +166,13 @@ const log = {
     },
 }
 
-export default { user, department, role, service, customer, log }
+const qrcode = {
+    new: async (data: NewQrCodeForm) => {
+        const io = getIoInstance()
+        const qr = await prisma.qrCode.create({ data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id } })
+        io.emit("qrcode:new", qr)
+        return qr
+    },
+}
+
+export default { user, department, role, service, customer, log, qrcode }
