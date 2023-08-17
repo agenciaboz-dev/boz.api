@@ -5,11 +5,11 @@ import { getIoInstance } from "./io/socket"
 const prisma = new PrismaClient()
 
 const inclusions = {
-    user: { roles: true, department: true },
+    user: { roles: true, department: true, qrcodes: true },
     department: {},
     role: {},
     service: {},
-    customer: { services: true },
+    customer: { services: true, qrcodes: true },
     logs: { user: true },
 }
 
