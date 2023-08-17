@@ -31,6 +31,8 @@ const sync = async (user: User & { status: number }, clients: ClientBag, socket:
 
     const customers = await prisma.customer.list()
     socket.emit("customers:sync", customers)
+
+    prisma.log.status(user, user.status)
 }
 
 export default { sync }
