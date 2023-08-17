@@ -11,6 +11,8 @@ const logout = async (socket: Socket, clients: ClientBag, user: User) => {
     const io = getIoInstance()
     io.emit("user:disconnect", user)
     clients.remove(clients?.get(socket))
+
+    prisma.log.status(user, 0)
 }
 
 const newUser = async (socket: Socket, newUser: any) => {
@@ -45,6 +47,7 @@ const status = (socket: Socket, user: User & { status: number }, clients: Client
     if (client) {
         clients.update(client, user)
         io.emit("user:status:update", user)
+        prisma.log.status(user, user.status)
     }
 }
 

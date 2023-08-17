@@ -1,4 +1,4 @@
-import { Customer, Department, PrismaClient, Role, Service } from "@prisma/client"
+import { Customer, Department, PrismaClient, Role, Service, User } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 
 const prisma = new PrismaClient()
@@ -149,4 +149,8 @@ const service = {
         }),
 }
 
-export default { user, department, role, service, customer }
+const log = {
+    status: async (user: User, status: number) => await prisma.statusLog.create({ data: { userId: user.id, status } }),
+}
+
+export default { user, department, role, service, customer, log }

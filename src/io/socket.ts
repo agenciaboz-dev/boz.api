@@ -65,10 +65,9 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("disconnect", () => {
         console.log(`disconnected: ${socket.id}`)
-        const user = clients.get(socket)?.user
-        io.emit("user:disconnect", user)
         const client = clients.get(socket)
-        clients.remove(client)
+
+        if (client) user.logout(socket, clients, client.user)
     })
 
     socket.on("client:sync", async (user: User & { status: number }) => client.sync(user, clients, socket))
