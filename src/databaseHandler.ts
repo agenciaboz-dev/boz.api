@@ -171,7 +171,8 @@ const qrcode = {
     new: async (data: NewQrCodeForm) => {
         const io = getIoInstance()
         const qr = await prisma.qrCode.create({ data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id } })
-        io.emit("qrcode:new", qr)
+        const customer = await prisma.customer.findUnique({ where: { id: data.customer.id } })
+        io.emit("customer:update", customer)
         return qr
     },
     list: async () => await prisma.qrCode.findMany({ include: inclusions.qrcode }),
