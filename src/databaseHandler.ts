@@ -1,5 +1,6 @@
 import { Customer, Department, PrismaClient, Role, Service, User } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
+import { getIoInstance } from "./io/socket"
 
 const prisma = new PrismaClient()
 
@@ -150,7 +151,17 @@ const service = {
 }
 
 const log = {
-    status: async (user: User, status: number) => await prisma.statusLog.create({ data: { userId: user.id, status } }),
+    status: async (user: User, status: number) => {
+        const io = getIoInstance()
+        const log = await prisma.statusLog.create({ data: { userId: user.id, status } })
+        io.emit("log:status:new", log)
+
+        return log
+    },
+
+    list: {
+        status: async () => await prisma.statusLog.findMany(),
+    },
 }
 
 export default { user, department, role, service, customer, log }
