@@ -21,6 +21,7 @@ model User {
     departmentId    Int
     department      Department  @relation(fields: [departmentId], references: [id])
     roles           Role[]
+    statusLog       StatusLog[]
 }
 
 model Department {
@@ -51,4 +52,13 @@ model Service {
     tag             String      @unique
     name            String
     customers       Customer[]
+}
+
+model StatusLog {
+    id              Int         @id @default(autoincrement())
+    status          Int
+    datetime        DateTime    @default(now())
+
+    userId          Int
+    user            User        @relation(fields: [userId], references: [id])
 }
