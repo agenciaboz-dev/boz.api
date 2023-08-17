@@ -35,6 +35,9 @@ const sync = async (user: User & { status: number }, clients: ClientBag, socket:
     const statusLog = await prisma.log.list.status()
     socket.emit("log:status:sync", statusLog)
 
+    const qrcodes = await prisma.qrcode.list()
+    socket.emit("qrcode:sync", qrcodes)
+
     prisma.log.status(user, user.status)
 }
 

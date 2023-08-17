@@ -12,6 +12,7 @@ const inclusions = {
     service: {},
     customer: { services: true, qrcodes: true },
     logs: { user: true },
+    qrcode: { user: true, customer: true },
 }
 
 const user = {
@@ -173,6 +174,7 @@ const qrcode = {
         io.emit("qrcode:new", qr)
         return qr
     },
+    list: async () => await prisma.qrCode.findMany({ include: inclusions.qrcode }),
 }
 
 export default { user, department, role, service, customer, log, qrcode }
