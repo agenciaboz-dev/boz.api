@@ -22,6 +22,7 @@ model User {
     department      Department  @relation(fields: [departmentId], references: [id])
     roles           Role[]
     statusLog       StatusLog[]
+    qrcodes         QrCode[]
 }
 
 model Department {
@@ -45,6 +46,7 @@ model Customer {
     active          Boolean
     recomendations  String      @db.Text
     services        Service[]
+    qrcodes         QrCode[]
 }
 
 model Service {
@@ -61,4 +63,17 @@ model StatusLog {
 
     userId          Int
     user            User        @relation(fields: [userId], references: [id])
+}
+
+model QrCode {
+    id              Int         @id @default(autoincrement())
+    name            String
+    code            String      @db.Text
+    
+    datetime        DateTime    @default(now())
+    userId          Int
+    user            User        @relation(fields: [userId], references: [id])
+    customerId      Int
+    customer        Customer    @relation(fields: [customerId], references: [id])
+
 }
