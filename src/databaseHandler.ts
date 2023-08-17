@@ -10,6 +10,7 @@ const inclusions = {
     role: {},
     service: {},
     customer: { services: true },
+    logs: { user: true },
 }
 
 const user = {
@@ -153,14 +154,14 @@ const service = {
 const log = {
     status: async (user: User, status: number) => {
         const io = getIoInstance()
-        const log = await prisma.statusLog.create({ data: { userId: user.id, status } })
+        const log = await prisma.statusLog.create({ data: { userId: user.id, status }, include: inclusions.logs })
         io.emit("log:status:new", log)
 
         return log
     },
 
     list: {
-        status: async () => await prisma.statusLog.findMany(),
+        status: async () => await prisma.statusLog.findMany({ include: inclusions.logs }),
     },
 }
 
