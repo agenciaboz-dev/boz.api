@@ -92,4 +92,5 @@ export const handleSocket = (socket: Socket) => {
     socket.on("department:delete", (data) => department.remove(socket, data))
 
     socket.on("qrcode:new", (data) => qrcode.new(socket, data))
+    socket.on("qrcode:update", (data) => qrcode.update(socket, data))
 }

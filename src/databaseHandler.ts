@@ -1,4 +1,4 @@
-import { Customer, Department, PrismaClient, Role, Service, User } from "@prisma/client"
+import { Customer, Department, PrismaClient, QrCode, Role, Service, User } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 import { getIoInstance } from "./io/socket"
 import { NewQrCodeForm } from "./definitions/NewQrCodeForm"
@@ -171,6 +171,16 @@ const qrcode = {
     new: async (data: NewQrCodeForm) => {
         const io = getIoInstance()
         const qr = await prisma.qrCode.create({ data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id } })
+        const customer = await prisma.customer.findUnique({ where: { id: data.customer.id }, include: inclusions.customer })
+        io.emit("customer:update", customer)
+        return qr
+    },
+    update: async (data: QrCode & { user: User; customer: Customer }) => {
+        const io = getIoInstance()
+        const qr = await prisma.qrCode.update({
+            where: { id: data.id },
+            data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id },
+        })
         const customer = await prisma.customer.findUnique({ where: { id: data.customer.id }, include: inclusions.customer })
         io.emit("customer:update", customer)
         return qr
