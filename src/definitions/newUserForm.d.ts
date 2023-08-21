@@ -10,4 +10,5 @@ declare interface NewUserForm {
     departmentId: number
 
     image?: ArrayBuffer
+    filename?: string
 }

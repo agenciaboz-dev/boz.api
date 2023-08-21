@@ -73,6 +73,15 @@ const user = {
         })
     },
 
+    image: async (data: { id: number; filename: string }) =>
+        await prisma.user.update({
+            where: { id: data.id },
+            data: {
+                image: `https://app.agenciaboz.com.br:4105/static/users/${data.id}/images/${data.filename}`,
+            },
+            include: inclusions.user,
+        }),
+
     delete: async (data: { id: number | string }) => await prisma.user.delete({ where: { id: Number(data.id) } }),
 }
 

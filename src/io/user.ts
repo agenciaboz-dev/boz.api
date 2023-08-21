@@ -16,10 +16,13 @@ const logout = async (socket: Socket, clients: ClientBag, user: User) => {
 }
 
 const newUser = async (socket: Socket, newUser: any) => {
-    const user = await prisma.user.new(newUser)
+    let user = await prisma.user.new(newUser)
 
     if (user) {
-        if (newUser.image) saveImage(`users/${user.id}/images`, newUser.image, "profilePic")
+        if (newUser.image) {
+            saveImage(`users/${user.id}/images`, newUser.image, newUser.filename)
+            user = await prisma.user.image({ id: user.id, filename: newUser.filename })
+        }
 
         socket.emit("user:new:success", user)
         socket.broadcast.emit("user:new", user)
@@ -29,10 +32,13 @@ const newUser = async (socket: Socket, newUser: any) => {
 }
 
 const update = async (socket: Socket, data: any) => {
-    const user = await prisma.user.update(data)
+    let user = await prisma.user.update(data)
 
     if (user) {
-        if (data.image) saveImage(`users/${user.id}/images`, data.image, "profilePic")
+        if (data.image) {
+            saveImage(`users/${user.id}/images`, data.image, data.filename)
+            user = await prisma.user.image(data)
+        }
 
         socket.emit("user:update:success", user)
         socket.broadcast.emit("user:update", user)
