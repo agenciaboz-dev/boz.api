@@ -128,6 +128,14 @@ const customer = {
             where: { id: data.id },
             include: inclusions.customer,
         }),
+    image: async (data: { id: number; filename: string }) =>
+        await prisma.customer.update({
+            where: { id: data.id },
+            data: {
+                image: `https://app.agenciaboz.com.br:4105/static/customers/${data.id}/images/${data.filename}`,
+            },
+            include: inclusions.customer,
+        }),
     delete: async (data: Customer) =>
         await prisma.customer.delete({
             where: { id: data.id },
