@@ -17,6 +17,7 @@ model User {
     cpf             String
     birth           DateTime    @db.Date
     phone           String      @default("")
+    image           String      @default("")
 
     departmentId    Int
     department      Department  @relation(fields: [departmentId], references: [id])
@@ -45,6 +46,8 @@ model Customer {
     name            String
     active          Boolean
     recomendations  String      @db.Text
+    image           String      @default("")
+    
     services        Service[]
     qrcodes         QrCode[]
 }
