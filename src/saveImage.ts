@@ -1,3 +1,4 @@
+import { bulkWebPConvert } from "@caldwell619/bulk-webp-converter"
 import { createWriteStream, existsSync, mkdirSync } from "fs"
 import { join } from "path"
 
@@ -10,4 +11,6 @@ export const saveImage = (path: string, file: ArrayBuffer, filename: string) => 
 
     const filepath = join(uploadDir, filename)
     createWriteStream(filepath).write(buffer)
+
+    bulkWebPConvert({ pathToOutput: uploadDir, pathToSource: uploadDir, quality: 70 })
 }
