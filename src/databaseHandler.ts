@@ -102,7 +102,7 @@ const department = {
 
 const role = {
     list: async () => {
-        const total = await prisma.role.count()
+        const total = await prisma.statusLog.count()
         const count = Array.from({ length: Math.floor(total / 100) + 1 }, (_, i) => i)
         const batch = 100
         const list = await Promise.all(
