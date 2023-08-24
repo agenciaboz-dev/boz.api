@@ -180,7 +180,23 @@ const log = {
     },
 
     list: {
-        status: async () => await prisma.statusLog.findMany({ include: inclusions.logs }),
+        status: async () => {
+            const total = await prisma.statusLog.count()
+            const count = Array.from({ length: Math.floor(total / 100) + 1 }, (_, i) => i)
+            const batch = 100
+            const list = await Promise.all(
+                count.map(
+                    async (index) =>
+                        await prisma.statusLog.findMany({
+                            include: inclusions.logs,
+                            orderBy: { id: "asc" },
+                            skip: index * batch,
+                            take: batch,
+                        })
+                )
+            )
+            return list.flat()
+        },
     },
 }
 
