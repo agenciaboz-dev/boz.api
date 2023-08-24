@@ -20,7 +20,7 @@ model User {
     image           String      @default("")
 
     departmentId    Int
-    department      Department  @relation(fields: [departmentId], references: [id])
+    department      Department  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
     roles           Role[]
     statusLog       StatusLog[]
     qrcodes         QrCode[]
@@ -65,7 +65,7 @@ model StatusLog {
     datetime        DateTime    @default(now())
 
     userId          Int
-    user            User        @relation(fields: [userId], references: [id])
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model QrCode {
@@ -75,8 +75,8 @@ model QrCode {
     
     datetime        DateTime    @default(now())
     userId          Int
-    user            User        @relation(fields: [userId], references: [id])
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
     customerId      Int
-    customer        Customer    @relation(fields: [customerId], references: [id])
+    customer        Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
 }
