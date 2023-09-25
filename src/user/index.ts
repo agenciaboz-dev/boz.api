@@ -14,7 +14,11 @@ router.post("/login", async (request: Request, response: Response) => {
     const data = request.body
 
     const user = await prisma.user.login(data)
-    response.json({ ...user, status: 1 })
+    if (user) {
+        response.json({ ...user, status: 1 })
+    } else {
+        response.json(user)
+    }
 })
 
 router.post("/delete", async (request: Request, response: Response) => {
