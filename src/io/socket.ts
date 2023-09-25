@@ -11,9 +11,16 @@ import customer from "./customer"
 import department from "./department"
 import service from "./service"
 import qrcode from "./qrcode"
+import coffee from "./coffee"
 
 let clientList: Client[] = []
 let io: SocketIoServer | null = null
+
+export let coffeeList: User[] = []
+
+export const cleanCoffeeList = (user: User) => {
+    coffeeList = coffeeList.filter(item => item.id != user.id)
+}
 
 export const initializeIoServer = (server: HttpServer | HttpsServer) => {
     io = new SocketIoServer(server, { cors: { origin: "*" }, maxHttpBufferSize: 1e8 })
@@ -65,7 +72,11 @@ export const handleSocket = (socket: Socket) => {
         console.log(`disconnected: ${socket.id}`)
         const client = clients.get(socket)
 
-        if (client) user.logout(socket, clients, client.user)
+        if (client) {
+            user.logout(socket, clients, client.user)
+
+            if (client.user) coffeeList = coffeeList.filter((user) => user.id != client.user.id)
+        }
     })
 
     socket.on("client:sync", async (user: User & { status: number }) => client.sync(user, clients, socket))
@@ -93,4 +104,6 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("qrcode:new", (data) => qrcode.new(socket, data))
     socket.on("qrcode:update", (data) => qrcode.update(socket, data))
+
+    socket.on("coffee:wanting", (data) => coffee.wanting(socket, data.user, data.wanting))
 }
