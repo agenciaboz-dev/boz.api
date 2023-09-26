@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const token = "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"
+const token = process.env.GITHUB_TOKEN
 
 const api = axios.create({
     baseURL: "https://api.github.com",
