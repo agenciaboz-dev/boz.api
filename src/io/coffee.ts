@@ -1,11 +1,23 @@
-import { User } from "@prisma/client"
+import { Role, User } from "@prisma/client"
 import { Socket } from "socket.io"
 import { cleanCoffeeList, clientList, coffeeList, getIoInstance } from "./socket"
+
+const getCoffeeUsers = () => {
+    const users = clientList.map((item) => item.user).filter((user) => user.status == 1)
+    const interns: User[] = []
+
+    // users.map(user => {
+    //     // if (user)
+    // })
+
+    return users
+}
 
 const getCoffeeMaker = () => {
     console.log("getting maker")
     const io = getIoInstance()
-    const users = clientList.map((item) => item.user)
+    const users = getCoffeeUsers()
+
     let tries = 20
     let speed = 500
 
