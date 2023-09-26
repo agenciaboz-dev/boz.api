@@ -5,3 +5,4 @@ dist
 .wwebjs_cache
 whatsapp.auth
 static/users
+static/customers
