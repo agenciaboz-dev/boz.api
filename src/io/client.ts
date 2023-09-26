@@ -2,12 +2,14 @@ import { User } from "@prisma/client"
 import { Socket } from "socket.io"
 import { ClientBag } from "../definitions/client"
 import databaseHandler from "../databaseHandler"
-import { getIoInstance } from "./socket"
+import { coffeeList, getIoInstance } from "./socket"
 
 const prisma = databaseHandler
 
 const sync = async (user: User & { status: number }, clients: ClientBag, socket: Socket) => {
     const io = getIoInstance()
+
+    socket.emit("coffee:list", coffeeList)
 
     clients.add({ socket, user })
     io.emit("user:connect", user)

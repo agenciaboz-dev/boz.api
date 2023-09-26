@@ -13,13 +13,17 @@ import service from "./service"
 import qrcode from "./qrcode"
 import coffee from "./coffee"
 
-let clientList: Client[] = []
+export let clientList: Client[] = []
 let io: SocketIoServer | null = null
 
 export let coffeeList: User[] = []
 
-export const cleanCoffeeList = (user: User) => {
-    coffeeList = coffeeList.filter(item => item.id != user.id)
+export const cleanCoffeeList = (user?: User) => {
+    if (user) {
+        coffeeList = coffeeList.filter((item) => item.id != user.id)
+    } else {
+        coffeeList = []
+    }
 }
 
 export const initializeIoServer = (server: HttpServer | HttpsServer) => {
@@ -106,4 +110,5 @@ export const handleSocket = (socket: Socket) => {
     socket.on("qrcode:update", (data) => qrcode.update(socket, data))
 
     socket.on("coffee:wanting", (data) => coffee.wanting(socket, data.user, data.wanting))
+    socket.on("coffee:ready", () => coffee.ready())
 }
