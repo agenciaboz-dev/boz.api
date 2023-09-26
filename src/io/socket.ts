@@ -12,6 +12,7 @@ import department from "./department"
 import service from "./service"
 import qrcode from "./qrcode"
 import coffee from "./coffee"
+import github from "../github"
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -111,4 +112,9 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("coffee:wanting", (data) => coffee.wanting(socket, data.user, data.wanting))
     socket.on("coffee:ready", () => coffee.ready())
+
+    socket.on("electron:update", async () => {
+        const lastestRelease = await github.lastestRelease()
+        io.emit("electron:latest", lastestRelease)
+    })
 }
