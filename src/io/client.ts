@@ -3,11 +3,15 @@ import { Socket } from "socket.io"
 import { ClientBag } from "../definitions/client"
 import databaseHandler from "../databaseHandler"
 import { coffeeList, getIoInstance } from "./socket"
+import github from "../github"
 
 const prisma = databaseHandler
 
 const sync = async (user: User & { status: number }, clients: ClientBag, socket: Socket) => {
     const io = getIoInstance()
+
+    const lastestRelease = await github.lastestRelease()
+    socket.emit("electron:latest", lastestRelease)
 
     socket.emit("coffee:list", coffeeList)
 
