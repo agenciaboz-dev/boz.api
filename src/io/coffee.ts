@@ -34,7 +34,9 @@ const getCoffeeMaker = () => {
             clearInterval(interval)
             const user = users.find((user) => user.username == "ellyham")
             io.emit("coffee:maker", user)
-            io.emit("coffee:making")
+            setTimeout(() => {
+                io.emit("coffee:making")
+            }, 1000)
         }
     }, speed)
 }
