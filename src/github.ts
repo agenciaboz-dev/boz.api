@@ -10,11 +10,15 @@ const api = axios.create({
 })
 
 const lastestRelease = async () => {
-    const data = (await api.get("/repos/agenciaboz-dev/boz.electron/releases/latest")).data
-    const version = data.name.replace("v", "")
-    const downloadUrl = data.assets[0].browser_download_url
+    try {
+        const data = (await api.get("/repos/agenciaboz-dev/boz.electron/releases/latest")).data
+        const version = data.name.replace("v", "")
+        const downloadUrl = data.assets[0].browser_download_url
 
-    return { latestVersion: version, downloadUrl }
+        return { latestVersion: version, downloadUrl }
+    } catch {
+        return {}
+    }
 }
 
 export default { lastestRelease }
