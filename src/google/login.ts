@@ -10,14 +10,14 @@ const login = async (socket: Socket, accessToken: string) => {
     const user = await databaseHandler.user.google.login(googleUser)
 
     if (user) {
-        socket.emit("google:login", user)
+        socket.emit("google:login", { ...user, status: 1 })
     } else {
         const user = await databaseHandler.user.google.firstLogin(googleUser)
 
         if (user) {
-            socket.emit("google:login:first", { ...user, googleId: googleUser.googleId })
+            socket.emit("google:login:first", { ...user, status: 1, googleId: googleUser.googleId })
         } else {
-            socket.emit("google:signup")
+            socket.emit("google:signup", googleUser)
         }
     }
 }

@@ -25,4 +25,12 @@ const remove = async (socket: Socket, data: Department) => {
     }
 }
 
-export default { update, remove }
+const sync = async (socket: Socket) => {
+    const departments = await prisma.department.list()
+    const roles = await prisma.role.list()
+
+    socket.emit("roles:sync", roles)
+    socket.emit("departments:sync", departments)
+}
+
+export default { update, remove, sync }

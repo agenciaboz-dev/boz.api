@@ -46,6 +46,7 @@ const user = {
                 username: data.username.toLowerCase(),
                 departmentId: data.departmentId,
                 roles: { connect: roles.map((role) => ({ id: role.id })) },
+                googleId: data.googleId,
             },
             include: inclusions.user,
         })
