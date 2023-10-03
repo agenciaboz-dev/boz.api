@@ -32,7 +32,7 @@ const getCoffeeMaker = () => {
 
         if (tries == 0) {
             clearInterval(interval)
-            // const user = users.find((user) => user.username == "ellyham")
+            const user = users.find((user) => user.username == "ellyham")
 
             io.emit("coffee:maker", user)
             setTimeout(() => {
