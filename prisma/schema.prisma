@@ -24,6 +24,8 @@ model User {
     roles           Role[]
     statusLog       StatusLog[]
     qrcodes         QrCode[]
+
+    googleId        String?
 }
 
 model Department {
