@@ -13,6 +13,7 @@ import service from "./service"
 import qrcode from "./qrcode"
 import coffee from "./coffee"
 import github from "../github"
+import google from "../google"
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -117,4 +118,7 @@ export const handleSocket = (socket: Socket) => {
         const lastestRelease = await github.lastestRelease()
         io.emit("electron:latest", lastestRelease)
     })
+
+    socket.on("google:login", (data) => google.login.login(socket, data))
+    socket.on("google:link", (user) => google.person.link(socket, user))
 }
