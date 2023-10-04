@@ -11,4 +11,5 @@ declare interface NewUserForm {
 
     image?: ArrayBuffer
     filename?: string
+    googleId?: string
 }

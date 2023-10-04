@@ -46,6 +46,7 @@ const user = {
                 username: data.username.toLowerCase(),
                 departmentId: data.departmentId,
                 roles: { connect: roles.map((role) => ({ id: role.id })) },
+                googleId: data.googleId,
             },
             include: inclusions.user,
         })
@@ -83,6 +84,13 @@ const user = {
         }),
 
     delete: async (data: { id: number | string }) => await prisma.user.delete({ where: { id: Number(data.id) } }),
+
+    google: {
+        firstLogin: async (googleUser: People) =>
+            await prisma.user.findFirst({ where: { email: { in: googleUser.emails } }, include: inclusions.user }),
+        login: async (googleUser: People) => await prisma.user.findFirst({ where: { googleId: googleUser.googleId }, include: inclusions.user }),
+        link: async (user: User) => await prisma.user.update({ where: { id: user.id }, data: { googleId: user.googleId } }),
+    },
 }
 
 const department = {
