@@ -15,4 +15,10 @@ const update = async (socket: Socket, data: QrCode & { user: User; customer: Cus
     socket.emit("qrcode:new:success")
 }
 
-export default { new: create, update }
+const remove = async (socket: Socket, data: QrCode) => {
+    const qrcode = await prisma.qrcode.delete(data)
+    socket.emit("qrcode:delete:success", qrcode)
+    socket.broadcast.emit("qrcode:delete", qrcode)
+}
+
+export default { new: create, update, remove }

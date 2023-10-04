@@ -111,6 +111,7 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("qrcode:new", (data) => qrcode.new(socket, data))
     socket.on("qrcode:update", (data) => qrcode.update(socket, data))
+    socket.on("qrcode:delete", (data) => qrcode.remove(socket, data))
 
     socket.on("coffee:wanting", (data) => coffee.wanting(socket, data.user, data.wanting))
     socket.on("coffee:ready", () => coffee.ready())

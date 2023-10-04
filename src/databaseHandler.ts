@@ -204,7 +204,9 @@ const log = {
 const qrcode = {
     new: async (data: NewQrCodeForm) => {
         const io = getIoInstance()
-        const qr = await prisma.qrCode.create({ data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id } })
+        const qr = await prisma.qrCode.create({
+            data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id },
+        })
         const customer = await prisma.customer.findUnique({ where: { id: data.customer.id }, include: inclusions.customer })
         io.emit("customer:update", customer)
         return qr
@@ -220,6 +222,8 @@ const qrcode = {
         return qr
     },
     list: async () => await prisma.qrCode.findMany({ include: inclusions.qrcode }),
+
+    delete: async (qrcode: QrCode) => await prisma.qrCode.delete({ where: { id: qrcode.id } }),
 }
 
 export default { user, department, role, service, customer, log, qrcode }
