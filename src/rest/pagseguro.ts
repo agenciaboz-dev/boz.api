@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 router.post('/', async (request:Request, response:Response) => {    
     const data = request.body
 
-    console.log(data)
+    console.log({ order: data })
 
 })
 
