@@ -89,7 +89,7 @@ model Warning {
     id              Int         @id @default(autoincrement())
     title           String
     text            String      @db.Text
-    date            BigInt
+    date            String
 
     creatorId       Int
     creator         User        @relation(fields: [creatorId], references: [id])        
