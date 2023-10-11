@@ -1,4 +1,4 @@
-import { Customer, Department, PrismaClient, QrCode, Role, Service, User } from "@prisma/client"
+import { Customer, Department, PrismaClient, QrCode, Role, Service, User, Warning } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 import { getIoInstance } from "./io/socket"
 import { NewQrCodeForm } from "./definitions/NewQrCodeForm"
@@ -13,6 +13,7 @@ const inclusions = {
     customer: { services: true, qrcodes: { include: { user: true, customer: true } } },
     logs: { user: true },
     qrcode: { user: true, customer: true },
+    warning: { creator: true, confirmed: true },
 }
 
 const user = {
@@ -226,4 +227,19 @@ const qrcode = {
     delete: async (qrcode: QrCode) => await prisma.qrCode.delete({ where: { id: qrcode.id } }),
 }
 
-export default { user, department, role, service, customer, log, qrcode }
+const warning = {
+    create: async (data: NewWarningForm) =>
+        prisma.warning.create({
+            data: {
+                title: data.title,
+                text: data.text,
+                date: new Date().getTime(),
+                creatorId: data.creatorId,
+            },
+            include: inclusions.warning,
+        }),
+
+    list: async () => prisma.warning.findMany({ include: inclusions.warning }),
+}
+
+export default { user, department, role, service, customer, log, qrcode, warning }

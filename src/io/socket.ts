@@ -14,6 +14,7 @@ import qrcode from "./qrcode"
 import coffee from "./coffee"
 import github from "../github"
 import google from "../google"
+import warning from "./warning"
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -123,4 +124,6 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("google:login", (data) => google.login.login(socket, data))
     socket.on("google:link", (user) => google.person.link(socket, user))
+
+    socket.on("warning:new", (data) => warning.create(socket, data))
 }
