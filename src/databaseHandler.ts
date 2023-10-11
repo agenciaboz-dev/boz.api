@@ -233,7 +233,7 @@ const warning = {
             data: {
                 title: data.title,
                 text: data.text,
-                date: new Date().getTime(),
+                date: new Date().getTime().toString(),
                 creatorId: data.creatorId,
                 confirmed: { connect: { id: data.creatorId } },
             },
