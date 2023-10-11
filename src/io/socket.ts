@@ -126,4 +126,5 @@ export const handleSocket = (socket: Socket) => {
     socket.on("google:link", (user) => google.person.link(socket, user))
 
     socket.on("warning:new", (data) => warning.create(socket, data))
+    socket.on("warning:confirm", (data) => warning.confirm(socket, data.id, data.warning))
 }

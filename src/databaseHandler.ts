@@ -241,6 +241,13 @@ const warning = {
         }),
 
     list: async () => prisma.warning.findMany({ include: inclusions.warning }),
+
+    confirm: async (userId: number, warning: Warning & { confirmed: User[] }) =>
+        await prisma.warning.update({
+            where: { id: warning.id },
+            data: { confirmed: { set: [], connect: [...warning.confirmed.map((user) => ({ id: user.id })), { id: userId }] } },
+            include: inclusions.warning,
+        }),
 }
 
 export default { user, department, role, service, customer, log, qrcode, warning }
