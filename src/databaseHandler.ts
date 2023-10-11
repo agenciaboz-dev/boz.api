@@ -235,6 +235,7 @@ const warning = {
                 text: data.text,
                 date: new Date().getTime(),
                 creatorId: data.creatorId,
+                confirmed: { connect: { id: data.creatorId } },
             },
             include: inclusions.warning,
         }),
