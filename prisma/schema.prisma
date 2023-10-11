@@ -24,6 +24,8 @@ model User {
     roles           Role[]
     statusLog       StatusLog[]
     qrcodes         QrCode[]
+    warnings        Warning[]
+    confirmedWarnings   Warning[]   @relation(name: "confirmed")
 
     googleId        String?
 }
@@ -81,4 +83,16 @@ model QrCode {
     customerId      Int
     customer        Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
+}
+
+model Warning {
+    id              Int         @id @default(autoincrement())
+    title           String
+    text            String      @db.Text
+    date            BigInt
+
+    creatorId       Int
+    creator         User        @relation(fields: [creatorId], references: [id])        
+
+    confirmed       User[]      @relation(name: "confirmed")
 }
