@@ -18,6 +18,9 @@ const sync = async (user: User & { status: number }, clients: ClientBag, socket:
     clients.add({ socket, user })
     io.emit("user:connect", user)
 
+    const warnings = await prisma.warning.list()
+    socket.emit("warning:list", warnings)
+
     console.log(`new client: ${user.username}`)
 
     const connected = clients.list()
@@ -43,9 +46,6 @@ const sync = async (user: User & { status: number }, clients: ClientBag, socket:
 
     const qrcodes = await prisma.qrcode.list()
     socket.emit("qrcode:sync", qrcodes)
-
-    const warnings = await prisma.warning.list()
-    socket.emit("warning:list", warnings)
 
     prisma.log.status(user, user.status)
 }
