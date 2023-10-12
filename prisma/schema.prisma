@@ -26,6 +26,7 @@ model User {
     qrcodes         QrCode[]
     warnings        Warning[]
     confirmedWarnings   Warning[]   @relation(name: "confirmed")
+    comments        Comment[]
 
     googleId        String?
 }
@@ -92,7 +93,21 @@ model Warning {
     date            String
 
     creatorId       Int
-    creator         User        @relation(fields: [creatorId], references: [id])        
+    creator         User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)        
 
     confirmed       User[]      @relation(name: "confirmed")
+    comments        Comment[]
+}
+
+model Comment {
+    id              Int         @id @default(autoincrement())
+    text            String      @db.Text
+    date            String
+
+    userId          Int
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    warningId       Int?
+    warning         Warning?    @relation(fields: [warningId], references: [id], onDelete: Cascade)
+
 }
