@@ -120,6 +120,7 @@ model ApiTester {
     name            String
     socket          Boolean
     baseUrl         String
+    port            String
 
     requests        TesterRequest[]
     events          TestarEvent[]
