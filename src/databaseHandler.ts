@@ -1,4 +1,4 @@
-import { ApiTester, Customer, Department, PrismaClient, QrCode, Role, Service, User, Warning } from "@prisma/client"
+import { ApiTester, Customer, Department, PrismaClient, QrCode, Role, Service, TesterRequest, User, Warning } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 import { getIoInstance } from "./io/socket"
 import { NewQrCodeForm } from "./definitions/NewQrCodeForm"
@@ -287,6 +287,17 @@ const apiTester = {
                     apiId: data.apiId,
                     payload: "",
                     response: "",
+                },
+            }),
+        update: async (data: TesterRequest) =>
+            await prisma.testerRequest.update({
+                where: { id: data.id },
+                data: {
+                    method: data.method,
+                    name: data.name,
+                    payload: data.payload,
+                    response: data.response,
+                    url: data.url,
                 },
             }),
     },

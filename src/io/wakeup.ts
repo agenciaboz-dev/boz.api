@@ -1,7 +1,7 @@
 import { Socket } from "socket.io"
 import databaseHandler from "../databaseHandler"
 import { getIoInstance } from "./socket"
-import { ApiTester } from "@prisma/client"
+import { ApiTester, TesterRequest } from "@prisma/client"
 
 const create = async (socket: Socket, data: ApiTesterForm) => {
     try {
@@ -51,6 +51,19 @@ const requests = {
         } catch (error) {
             console.log(error)
             socket.emit("wakeup:request:new:error", error)
+        }
+    },
+
+    update: async (socket: Socket, data: TesterRequest) => {
+        try {
+            const request = await databaseHandler.apiTester.requests.update(data)
+            const api = await databaseHandler.apiTester.find(request.apiId)
+
+            const io = getIoInstance()
+            io.emit("wakeup:update", api)
+        } catch (error) {
+            console.log(error)
+            socket.emit("wakeup:request:update:error", error)
         }
     },
 }
