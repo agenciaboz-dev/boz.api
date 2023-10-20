@@ -273,6 +273,23 @@ const apiTester = {
         }),
 
     remove: async (data: ApiTester) => await prisma.apiTester.delete({ where: { id: data.id } }),
+
+    find: async (id: number) => await prisma.apiTester.findUnique({ where: { id }, include: inclusions.apiTester }),
+
+    requests: {
+        create: async (data: NewRequestForm) =>
+            await prisma.testerRequest.create({
+                data: {
+                    name: data.name,
+                    method: data.method,
+                    url: data.url,
+                    creatorId: data.userId,
+                    apiId: data.apiId,
+                    payload: "",
+                    response: "",
+                },
+            }),
+    },
 }
 
 export default { user, department, role, service, customer, log, qrcode, warning, apiTester }

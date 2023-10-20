@@ -39,4 +39,20 @@ const remove = async (socket: Socket, data: ApiTester) => {
     }
 }
 
-export default { create, update, remove }
+const requests = {
+    create: async (socket: Socket, data: NewRequestForm) => {
+        try {
+            const request = await databaseHandler.apiTester.requests.create(data)
+            const api = await databaseHandler.apiTester.find(request.apiId)
+            socket.emit("wakeup:request:new:success", request)
+
+            const io = getIoInstance()
+            io.emit("wakeup:update", api)
+        } catch (error) {
+            console.log(error)
+            socket.emit("wakeup:request:new:error", error)
+        }
+    },
+}
+
+export default { create, update, remove, requests }
