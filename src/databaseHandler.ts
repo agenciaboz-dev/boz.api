@@ -1,4 +1,4 @@
-import { Customer, Department, PrismaClient, QrCode, Role, Service, User, Warning } from "@prisma/client"
+import { ApiTester, Customer, Department, PrismaClient, QrCode, Role, Service, User, Warning } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 import { getIoInstance } from "./io/socket"
 import { NewQrCodeForm } from "./definitions/NewQrCodeForm"
@@ -14,6 +14,7 @@ const inclusions = {
     logs: { user: true },
     qrcode: { user: true, customer: true },
     warning: { creator: true, confirmed: true },
+    apiTester: { requests: true, events: true, creator: true },
 }
 
 const user = {
@@ -250,4 +251,28 @@ const warning = {
         }),
 }
 
-export default { user, department, role, service, customer, log, qrcode, warning }
+const apiTester = {
+    create: async (data: ApiTesterForm) =>
+        await prisma.apiTester.create({
+            data: { baseUrl: data.baseUrl, name: data.name, socket: data.socket, creatorId: data.userId, port: data.port },
+            include: inclusions.apiTester,
+        }),
+
+    list: async () => prisma.apiTester.findMany({ include: inclusions.apiTester }),
+
+    update: async (data: ApiTester) =>
+        await prisma.apiTester.update({
+            where: { id: data.id },
+            data: {
+                baseUrl: data.baseUrl,
+                name: data.name,
+                port: data.port,
+                socket: data.socket,
+            },
+            include: inclusions.apiTester,
+        }),
+
+    remove: async (data: ApiTester) => await prisma.apiTester.delete({ where: { id: data.id } }),
+}
+
+export default { user, department, role, service, customer, log, qrcode, warning, apiTester }

@@ -13,6 +13,9 @@ const sync = async (user: User & { status: number }, clients: ClientBag, socket:
     const lastestRelease = await github.lastestRelease()
     socket.emit("electron:latest", lastestRelease)
 
+    const apis = await prisma.apiTester.list()
+    socket.emit("wakeup:sync", apis)
+
     socket.emit("coffee:list", coffeeList)
 
     clients.add({ socket, user })
@@ -46,6 +49,7 @@ const sync = async (user: User & { status: number }, clients: ClientBag, socket:
 
     const qrcodes = await prisma.qrcode.list()
     socket.emit("qrcode:sync", qrcodes)
+
 
     prisma.log.status(user, user.status)
 }

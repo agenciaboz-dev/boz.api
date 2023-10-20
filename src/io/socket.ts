@@ -15,6 +15,7 @@ import coffee from "./coffee"
 import github from "../github"
 import google from "../google"
 import warning from "./warning"
+import wakeup from "./wakeup"
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -127,4 +128,8 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("warning:new", (data) => warning.create(socket, data))
     socket.on("warning:confirm", (data) => warning.confirm(socket, data.id, data.warning))
+
+    socket.on("wakeup:create", (data) => wakeup.create(socket, data))
+    socket.on("wakeup:update", (data) => wakeup.update(socket, data))
+    socket.on("wakeup:delete", (data) => wakeup.remove(socket, data))
 }
