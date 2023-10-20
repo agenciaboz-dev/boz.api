@@ -66,6 +66,20 @@ const requests = {
             socket.emit("wakeup:request:update:error", error)
         }
     },
+
+    delete: async (socket: Socket, data: TesterRequest) => {
+        try {
+            const request = await databaseHandler.apiTester.requests.delete(data)
+            const api = await databaseHandler.apiTester.find(request.apiId)
+
+            const io = getIoInstance()
+            io.emit("wakeup:update", api)
+            socket.emit("wakeup:request:delete:success")
+        } catch (error) {
+            console.log(error)
+            socket.emit("wakeup:request:delete:error", error)
+        }
+    },
 }
 
 export default { create, update, remove, requests }

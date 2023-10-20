@@ -300,6 +300,7 @@ const apiTester = {
                     url: data.url,
                 },
             }),
+        delete: async (data: TesterRequest) => await prisma.testerRequest.delete({ where: { id: data.id } }),
     },
 }
 
