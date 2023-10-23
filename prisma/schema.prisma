@@ -121,6 +121,7 @@ model ApiTester {
     socket          Boolean
     baseUrl         String
     port            String
+    description     String      @db.Text @default("")
 
     requests        TesterRequest[]
     events          TestarEvent[]
