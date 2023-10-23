@@ -268,6 +268,7 @@ const apiTester = {
                 name: data.name,
                 port: data.port,
                 socket: data.socket,
+                description: data.description,
             },
             include: inclusions.apiTester,
         }),
