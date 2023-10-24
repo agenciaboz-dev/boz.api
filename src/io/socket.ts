@@ -135,4 +135,7 @@ export const handleSocket = (socket: Socket) => {
     socket.on("wakeup:request:new", (data) => wakeup.requests.create(socket, data))
     socket.on("wakeup:request:update", (data) => wakeup.requests.update(socket, data))
     socket.on("wakeup:request:delete", (data) => wakeup.requests.delete(socket, data))
+    socket.on("wakeup:event:new", (data) => wakeup.events.create(socket, data))
+    socket.on("wakeup:event:update", (data) => wakeup.events.update(socket, data))
+    socket.on("wakeup:event:delete", (data) => wakeup.events.delete(socket, data))
 }

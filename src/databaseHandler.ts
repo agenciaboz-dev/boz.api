@@ -1,4 +1,4 @@
-import { ApiTester, Customer, Department, PrismaClient, QrCode, Role, Service, TesterRequest, User, Warning } from "@prisma/client"
+import { ApiTester, Customer, Department, PrismaClient, QrCode, Role, Service, TestarEvent, TesterRequest, User, Warning } from "@prisma/client"
 import { NewCustomerForm } from "./definitions/NewCustomerForm"
 import { getIoInstance } from "./io/socket"
 import { NewQrCodeForm } from "./definitions/NewQrCodeForm"
@@ -302,6 +302,31 @@ const apiTester = {
                 },
             }),
         delete: async (data: TesterRequest) => await prisma.testerRequest.delete({ where: { id: data.id } }),
+    },
+
+    events: {
+        create: async (data: NewEventForm) =>
+            await prisma.testarEvent.create({
+                data: {
+                    name: data.name,
+                    payload: data.payload,
+                    event: data.event,
+
+                    creatorId: data.userId,
+                    apiId: data.apiId,
+                },
+            }),
+
+        update: async (data: TestarEvent) =>
+            await prisma.testarEvent.update({
+                where: { id: data.id },
+                data: {
+                    name: data.name,
+                    payload: data.payload,
+                    event: data.event,
+                },
+            }),
+        delete: async (data: TestarEvent) => await prisma.testarEvent.delete({ where: { id: data.id } }),
     },
 }
 

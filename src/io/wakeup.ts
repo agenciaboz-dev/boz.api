@@ -1,7 +1,7 @@
 import { Socket } from "socket.io"
 import databaseHandler from "../databaseHandler"
 import { getIoInstance } from "./socket"
-import { ApiTester, TesterRequest } from "@prisma/client"
+import { ApiTester, TestarEvent, TesterRequest } from "@prisma/client"
 
 const create = async (socket: Socket, data: ApiTesterForm) => {
     try {
@@ -82,4 +82,47 @@ const requests = {
     },
 }
 
-export default { create, update, remove, requests }
+const events = {
+    create: async (socket: Socket, data: NewEventForm) => {
+        try {
+            const event = await databaseHandler.apiTester.events.create(data)
+            const api = await databaseHandler.apiTester.find(event.apiId)
+            socket.emit("wakeup:event:new:success", event)
+
+            const io = getIoInstance()
+            io.emit("wakeup:update", api)
+        } catch (error) {
+            console.log(error)
+            socket.emit("wakeup:event:new:error", error)
+        }
+    },
+
+    update: async (socket: Socket, data: TestarEvent) => {
+        try {
+            const event = await databaseHandler.apiTester.events.update(data)
+            const api = await databaseHandler.apiTester.find(event.apiId)
+
+            const io = getIoInstance()
+            io.emit("wakeup:update", api)
+        } catch (error) {
+            console.log(error)
+            socket.emit("wakeup:event:update:error", error)
+        }
+    },
+
+    delete: async (socket: Socket, data: TestarEvent) => {
+        try {
+            const event = await databaseHandler.apiTester.events.delete(data)
+            const api = await databaseHandler.apiTester.find(event.apiId)
+
+            const io = getIoInstance()
+            io.emit("wakeup:update", api)
+            socket.emit("wakeup:event:delete:success")
+        } catch (error) {
+            console.log(error)
+            socket.emit("wakeup:event:delete:error", error)
+        }
+    },
+}
+
+export default { create, update, remove, requests, events }

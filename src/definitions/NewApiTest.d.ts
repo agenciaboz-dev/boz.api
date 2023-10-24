@@ -14,4 +14,12 @@ declare interface NewRequestForm {
     apiId: number
 }
 
+declare interface NewEventForm {
+    name: string
+    event: string
+    userId: number
+    apiId: number
+    payload: string
+}
+
 declare type HTTPMethod = "GET" | "POST"
