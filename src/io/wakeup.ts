@@ -32,6 +32,7 @@ const remove = async (socket: Socket, data: ApiTester) => {
     try {
         const api = await databaseHandler.apiTester.remove(data)
         const io = getIoInstance()
+        socket.emit("wakeup:delete:success")
 
         io.emit("wakeup:delete", { id: api.id })
     } catch (error) {
