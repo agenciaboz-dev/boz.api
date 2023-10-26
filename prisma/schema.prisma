@@ -32,6 +32,8 @@ model User {
     testerEvents    TestarEvent[]
 
     googleId        String?
+    googleToken     String?     @db.Text
+
 }
 
 model Department {
