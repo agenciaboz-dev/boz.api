@@ -92,6 +92,8 @@ const user = {
             await prisma.user.findFirst({ where: { email: { in: googleUser.emails } }, include: inclusions.user }),
         login: async (googleUser: People) => await prisma.user.findFirst({ where: { googleId: googleUser.googleId }, include: inclusions.user }),
         link: async (user: User) => await prisma.user.update({ where: { id: user.id }, data: { googleId: user.googleId } }),
+        updateToken: async (id: number, token: string) =>
+            await prisma.user.update({ where: { id }, data: { googleToken: token }, include: inclusions.user }),
     },
 }
 

@@ -124,6 +124,7 @@ export const handleSocket = (socket: Socket) => {
     })
 
     socket.on("google:login", (data) => google.login.login(socket, data))
+    socket.on("google:exchange", (data) => google.login.exchangeCode(socket, data))
     socket.on("google:link", (user) => google.person.link(socket, user))
 
     socket.on("warning:new", (data) => warning.create(socket, data))
