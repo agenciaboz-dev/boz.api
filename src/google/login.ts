@@ -32,8 +32,8 @@ const exchangeCode = (socket: Socket, code: string) => {
     const oauth2Client = new google.auth.OAuth2(
         "258639917596-glojms88bv4mr3cbdsk0t66vs839t6ju.apps.googleusercontent.com", // client id
         "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", // client secret
-        "http://localhost:5173" // redirect uri
-        // "https://app.agenciaboz.com.br" // redirect uri
+        // "http://localhost:5173" // redirect uri
+        "https://app.agenciaboz.com.br" // redirect uri
     )
 
     oauth2Client.getToken(code, (err, tokens) => {
