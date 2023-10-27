@@ -4,6 +4,7 @@ import { Socket } from "socket.io"
 import databaseHandler from "../databaseHandler"
 import person from "./person"
 import { google } from "googleapis"
+import { getGoogleClient } from "./client"
 
 const login = async (socket: Socket, tokens: Credentials) => {
     if (tokens.access_token) {
@@ -29,12 +30,7 @@ const login = async (socket: Socket, tokens: Credentials) => {
 }
 
 const exchangeCode = (socket: Socket, code: string) => {
-    const oauth2Client = new google.auth.OAuth2(
-        "258639917596-glojms88bv4mr3cbdsk0t66vs839t6ju.apps.googleusercontent.com", // client id
-        "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", // client secret
-        // "http://localhost:5173" // redirect uri
-        "https://app.agenciaboz.com.br" // redirect uri
-    )
+    const oauth2Client = getGoogleClient()
 
     oauth2Client.getToken(code, (err, tokens) => {
         if (err) {
