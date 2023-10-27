@@ -15,6 +15,7 @@ const getCalendar = async (socket: Socket, refresh_token: string) => {
 
             const response = await calendar.events.list({
                 calendarId: "primary",
+                maxResults: 2500,
             })
             console.log(response.data)
             socket.emit("google:calendar", response.data)
