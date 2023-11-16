@@ -30,7 +30,7 @@ try {
         {
             key: fs.readFileSync("/etc/letsencrypt/live/app.agencyboz.com/privkey.pem", "utf8"),
             cert: fs.readFileSync("/etc/letsencrypt/live/app.agencyboz.com/cert.pem", "utf8"),
-            ca: fs.readFileSync("/etc/letsencrypt/live/app.agencyboz.com/chain.pem", "utf8"),
+            ca: fs.readFileSync("/etc/letsencrypt/live/app.agencyboz.com/fullchain.pem", "utf8"),
         },
         app
     )
