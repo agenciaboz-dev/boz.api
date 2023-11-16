@@ -23,7 +23,7 @@ app.use(cookieParser())
 app.use("/api", router)
 app.use("/static", express.static("static"))
 
-whatsapp.client.initialize()
+// whatsapp.client.initialize()
 
 try {
     const server = https.createServer(
