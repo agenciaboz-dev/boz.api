@@ -38,7 +38,7 @@ const client = new Client({
 client.on("qr", (qr) => {
     qrCode = qr
     qrCodeResolver(qrCode)
-    console.log("whatsapp is disconnected. QrCode ready: " + qrCode)
+    // console.log("whatsapp is disconnected. QrCode ready: " + qrCode)
     // qrcode.generate(qr, { small: true })
 
     const io = getIoInstance()
