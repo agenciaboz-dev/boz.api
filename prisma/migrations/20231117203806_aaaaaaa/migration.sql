@@ -1,23 +1,105 @@
--- DropIndex
-DROP INDEX `Comment_userId_fkey` ON `Comment`;
+-- CreateTable
+CREATE TABLE `User` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `username` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `cpf` VARCHAR(191) NOT NULL,
+    `birth` DATE NOT NULL,
+    `phone` VARCHAR(191) NOT NULL DEFAULT '',
+    `image` TEXT NOT NULL DEFAULT '',
+    `departmentId` INTEGER NOT NULL,
+    `googleId` VARCHAR(191) NULL,
+    `googleToken` TEXT NULL,
 
--- DropIndex
-DROP INDEX `Comment_warningId_fkey` ON `Comment`;
+    UNIQUE INDEX `User_username_key`(`username`),
+    UNIQUE INDEX `User_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- DropIndex
-DROP INDEX `QrCode_customerId_fkey` ON `QrCode`;
+-- CreateTable
+CREATE TABLE `Department` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
 
--- DropIndex
-DROP INDEX `QrCode_userId_fkey` ON `QrCode`;
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- DropIndex
-DROP INDEX `StatusLog_userId_fkey` ON `StatusLog`;
+-- CreateTable
+CREATE TABLE `Role` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `tag` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
 
--- DropIndex
-DROP INDEX `User_departmentId_fkey` ON `User`;
+    UNIQUE INDEX `Role_tag_key`(`tag`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- DropIndex
-DROP INDEX `Warning_creatorId_fkey` ON `Warning`;
+-- CreateTable
+CREATE TABLE `Customer` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `active` BOOLEAN NOT NULL,
+    `recomendations` TEXT NOT NULL,
+    `image` TEXT NOT NULL DEFAULT '',
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Service` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `tag` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `Service_tag_key`(`tag`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `StatusLog` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `status` INTEGER NOT NULL,
+    `datetime` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `userId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `QrCode` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `code` TEXT NOT NULL,
+    `datetime` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `userId` INTEGER NOT NULL,
+    `customerId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Warning` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(191) NOT NULL,
+    `text` TEXT NOT NULL,
+    `date` VARCHAR(191) NOT NULL,
+    `creatorId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Comment` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `text` TEXT NOT NULL,
+    `date` VARCHAR(191) NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `warningId` INTEGER NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `ApiTester` (
@@ -25,6 +107,8 @@ CREATE TABLE `ApiTester` (
     `name` VARCHAR(191) NOT NULL,
     `socket` BOOLEAN NOT NULL,
     `baseUrl` VARCHAR(191) NOT NULL,
+    `port` VARCHAR(191) NOT NULL,
+    `description` TEXT NOT NULL DEFAULT '',
     `creatorId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -54,6 +138,33 @@ CREATE TABLE `TestarEvent` (
     `creatorId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_confirmed` (
+    `A` INTEGER NOT NULL,
+    `B` INTEGER NOT NULL,
+
+    UNIQUE INDEX `_confirmed_AB_unique`(`A`, `B`),
+    INDEX `_confirmed_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_RoleToUser` (
+    `A` INTEGER NOT NULL,
+    `B` INTEGER NOT NULL,
+
+    UNIQUE INDEX `_RoleToUser_AB_unique`(`A`, `B`),
+    INDEX `_RoleToUser_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_CustomerToService` (
+    `A` INTEGER NOT NULL,
+    `B` INTEGER NOT NULL,
+
+    UNIQUE INDEX `_CustomerToService_AB_unique`(`A`, `B`),
+    INDEX `_CustomerToService_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
