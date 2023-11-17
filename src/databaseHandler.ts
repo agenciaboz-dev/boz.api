@@ -80,7 +80,7 @@ const user = {
         await prisma.user.update({
             where: { id: data.id },
             data: {
-                image: `https://app.agenciaboz.com.br:4105/static/users/${data.id}/images/${data.filename}`,
+                image: `https://app.agencyboz.com:4105/static/users/${data.id}/images/${data.filename}`,
             },
             include: inclusions.user,
         }),
