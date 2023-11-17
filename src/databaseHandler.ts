@@ -144,7 +144,7 @@ const customer = {
         await prisma.customer.update({
             where: { id: data.id },
             data: {
-                image: `https://app.agenciaboz.com.br:4105/static/customers/${data.id}/images/${data.filename}`,
+                image: `https://app.agencyboz.com:4105/static/customers/${data.id}/images/${data.filename}`,
             },
             include: inclusions.customer,
         }),
