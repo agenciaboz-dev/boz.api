@@ -2,7 +2,7 @@ import { Socket } from "socket.io"
 import { Client, ClientBag } from "../definitions/client"
 import { Customer, Role, Service, User } from "@prisma/client"
 import user from "./user"
-import zap from "./zap"
+// import zap from "./zap"
 import { Server as SocketIoServer } from "socket.io"
 import { Server as HttpServer } from "http"
 import { Server as HttpsServer } from "https"
@@ -102,10 +102,10 @@ export const handleSocket = (socket: Socket) => {
     socket.on("service:update", (data) => service.update(socket, data))
     socket.on("service:delete", (data) => service.remove(socket, data))
 
-    socket.on("zap:sync", () => zap.sync(socket, clients))
+    // socket.on("zap:sync", () => zap.sync(socket, clients))
 
-    socket.on("chat:sync", (chat) => zap.getChat(socket, chat))
-    socket.on("message:new", (data) => zap.sendMessage(socket, data))
+    // socket.on("chat:sync", (chat) => zap.getChat(socket, chat))
+    // socket.on("message:new", (data) => zap.sendMessage(socket, data))
 
     socket.on("department:update", (data) => department.update(socket, data))
     socket.on("department:delete", (data) => department.remove(socket, data))
