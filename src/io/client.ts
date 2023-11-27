@@ -1,4 +1,4 @@
-import { User } from "@prisma/client"
+import { Role, User } from "@prisma/client"
 import { Socket } from "socket.io"
 import { ClientBag } from "../definitions/client"
 import databaseHandler from "../databaseHandler"
@@ -7,7 +7,7 @@ import github from "../github"
 
 const prisma = databaseHandler
 
-const sync = async (user: User & { status: number }, clients: ClientBag, socket: Socket) => {
+const sync = async (user: User & { status: number; roles: Role[] }, clients: ClientBag, socket: Socket) => {
     const io = getIoInstance()
 
     const lastestRelease = await github.lastestRelease()
@@ -44,12 +44,16 @@ const sync = async (user: User & { status: number }, clients: ClientBag, socket:
     const customers = await prisma.customer.list()
     socket.emit("customers:sync", customers)
 
-    const statusLog = await prisma.log.list.status()
-    socket.emit("log:status:sync", statusLog)
+    const selfLogs = await prisma.log.getUser(user.id)
+    socket.emit("log:status:self", selfLogs)
 
     const qrcodes = await prisma.qrcode.list()
     socket.emit("qrcode:sync", qrcodes)
 
+    if (user.roles.find((item) => item.tag == "admin")) {
+        const statusLog = await prisma.log.list.status()
+        socket.emit("log:status:sync", statusLog)
+    }
 
     prisma.log.status(user, user.status)
 }

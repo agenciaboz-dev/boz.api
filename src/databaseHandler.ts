@@ -192,7 +192,7 @@ const log = {
     },
 
     list: {
-        status: async () => await prisma.statusLog.findMany({ include: inclusions.logs }),
+        status: async () => await prisma.statusLog.findMany({ include: inclusions.logs })
         // status: async () => {
         //     const total = await prisma.statusLog.count()
         //     const count = Array.from({ length: Math.floor(total / 100) + 1 }, (_, i) => i)
@@ -203,6 +203,8 @@ const log = {
         //     return list.flat()
         // },
     },
+
+    getUser: async (user_id: number) => await prisma.statusLog.findMany({ where: { userId: user_id }, include: inclusions.logs })
 }
 
 const qrcode = {
