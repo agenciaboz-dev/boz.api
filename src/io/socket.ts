@@ -97,8 +97,10 @@ export const handleSocket = (socket: Socket) => {
     }
   });
 
-  socket.on("client:sync", async (user: User & { status: number }) =>
-    client.sync(user, clients, socket)
+  socket.on(
+    "client:sync",
+    async (user: User & { status: number; roles: Role[] }) =>
+      client.sync(user, clients, socket)
   );
 
   socket.on("user:logout", (data) => user.logout(socket, clients, data));
