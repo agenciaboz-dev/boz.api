@@ -8,21 +8,6 @@ import {
 const prisma = new PrismaClient();
 
 const inclusions = {
-  user: {
-    roles: true,
-    department: true,
-    qrcodes: { include: { user: true, customer: true } },
-  },
-  department: {},
-  role: {},
-  service: {},
-  customer: {
-    services: true,
-    qrcodes: { include: { user: true, customer: true } },
-  },
-  logs: { user: true },
-  qrcode: { user: true, customer: true },
-  warning: { creator: true, confirmed: true },
   apiTester: { requests: true, events: true, creator: true },
 };
 
