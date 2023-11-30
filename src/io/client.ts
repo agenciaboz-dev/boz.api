@@ -1,65 +1,64 @@
-import { Role, User } from "@prisma/client";
-import { Socket } from "socket.io";
-import { ClientBag } from "../definitions/client";
-import databaseHandler from "../databaseHandler";
-import { coffeeList, getIoInstance } from "./socket";
-import github from "../github";
+import { Role, User } from "@prisma/client"
+import { Socket } from "socket.io"
+import { ClientBag } from "../definitions/client"
+import databaseHandler from "../databaseHandler"
+import { coffeeList, getIoInstance } from "./socket"
+import github from "../github"
 
-const prisma = databaseHandler;
+const prisma = databaseHandler
 
-const sync = async (
-  user: User & { status: number; roles: Role[] },
-  clients: ClientBag,
-  socket: Socket
-) => {
-  const io = getIoInstance();
+const sync = async (user: User & { status: number; roles: Role[] }, clients: ClientBag, socket: Socket) => {
+    const io = getIoInstance()
 
-  const lastestRelease = await github.lastestRelease();
-  socket.emit("electron:latest", lastestRelease);
+    const themes = await prisma.theme.list()
+    socket.emit("theme:list", themes)
 
-  const apis = await prisma.apiTester.list();
-  socket.emit("wakeup:sync", apis);
+    const lastestRelease = await github.lastestRelease()
+    socket.emit("electron:latest", lastestRelease)
 
-  socket.emit("coffee:list", coffeeList);
+    const apis = await prisma.apiTester.list()
+    socket.emit("wakeup:sync", apis)
 
-  clients.add({ socket, user });
-  io.emit("user:connect", user);
+    socket.emit("coffee:list", coffeeList)
 
-  const warnings = await prisma.warning.list();
-  socket.emit("warning:list", warnings);
+    clients.add({ socket, user })
+    io.emit("user:connect", user)
 
-  console.log(`new client: ${user.username}`);
+    const warnings = await prisma.warning.list()
+    socket.emit("warning:list", warnings)
 
-  const connected = clients.list();
-  socket.emit("connected:sync", connected);
+    console.log(`new client: ${user.username}`)
 
-  const users = await prisma.user.list();
-  socket.emit("client:sync", users);
+    const connected = clients.list()
+    socket.emit("connected:sync", connected)
 
-  const departments = await prisma.department.list();
-  socket.emit("departments:sync", departments);
+    const users = await prisma.user.list()
+    socket.emit("client:sync", users)
 
-  const roles = await prisma.role.list();
-  socket.emit("roles:sync", roles);
+    const departments = await prisma.department.list()
+    socket.emit("departments:sync", departments)
 
-  const services = await prisma.service.list();
-  socket.emit("services:sync", services);
+    const roles = await prisma.role.list()
+    socket.emit("roles:sync", roles)
 
-  const customers = await prisma.customer.list();
-  socket.emit("customers:sync", customers);
+    const services = await prisma.service.list()
+    socket.emit("services:sync", services)
 
-  const selfLogs = await prisma.log.getUser(user.id);
-  socket.emit("log:status:self", selfLogs);
+    const customers = await prisma.customer.list()
+    socket.emit("customers:sync", customers)
 
-  const qrcodes = await prisma.qrcode.list();
-  socket.emit("qrcode:sync", qrcodes);
+    const selfLogs = await prisma.log.getUser(user.id)
+    socket.emit("log:status:self", selfLogs)
 
-  if (user.roles.find((item) => item.tag == "admin")) {
-    const statusLog = await prisma.log.list.status();
-    socket.emit("log:status:sync", statusLog);
-  }
+    const qrcodes = await prisma.qrcode.list()
+    socket.emit("qrcode:sync", qrcodes)
 
-  prisma.log.status(user, user.status);
-};
+    if (user.roles.find((item) => item.tag == "admin")) {
+        const statusLog = await prisma.log.list.status()
+        socket.emit("log:status:sync", statusLog)
+    }
 
-export default { sync };
+    prisma.log.status(user, user.status)
+}
+
+export default { sync }

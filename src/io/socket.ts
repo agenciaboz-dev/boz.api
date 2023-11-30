@@ -16,6 +16,7 @@ import github from "../github";
 import google from "../google";
 import warning from "./warning";
 import wakeup from "./wakeup";
+import theme from "./theme";
 
 export let clientList: Client[] = [];
 let io: SocketIoServer | null = null;
@@ -178,4 +179,10 @@ export const handleSocket = (socket: Socket) => {
   socket.on("wakeup:event:delete", (data) =>
     wakeup.events.delete(socket, data)
   );
+
+  socket.on("theme:list", () => theme.list(socket));
+  socket.on("theme:new", (data) => theme.create(socket, data));
+  socket.on("theme:activate", (data) => theme.activate(socket, data.id));
+  socket.on("theme:deactivate", () => theme.deactivate(socket));
+  socket.on("theme:update", (data) => theme.update(socket, data, data.id));
 };
