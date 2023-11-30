@@ -15,6 +15,7 @@ const inclusions = {
     qrcode: { user: true, customer: true },
     warning: { creator: true, confirmed: true },
     apiTester: { requests: true, events: true, creator: true },
+    theme: { user: true }
 }
 
 const user = {
@@ -22,15 +23,15 @@ const user = {
         await prisma.user.findFirst({
             where: {
                 OR: [{ email: data.login }, { username: data.login }, { cpf: data.login }],
-                AND: { password: data.password },
+                AND: { password: data.password }
             },
-            include: inclusions.user,
+            include: inclusions.user
         }),
 
     list: async () => await prisma.user.findMany({ include: inclusions.user }),
 
     find: {
-        username: async (username: string) => await prisma.user.findFirst({ where: { username }, include: inclusions.user }),
+        username: async (username: string) => await prisma.user.findFirst({ where: { username }, include: inclusions.user })
     },
 
     new: async (data: NewUserForm) => {
@@ -48,9 +49,9 @@ const user = {
                 username: data.username.toLowerCase(),
                 departmentId: data.departmentId,
                 roles: { connect: roles.map((role) => ({ id: role.id })) },
-                googleId: data.googleId,
+                googleId: data.googleId
             },
-            include: inclusions.user,
+            include: inclusions.user
         })
     },
 
@@ -60,7 +61,7 @@ const user = {
 
         return await prisma.user.update({
             where: {
-                id: data.id,
+                id: data.id
             },
             data: {
                 birth: new Date(birth),
@@ -70,9 +71,9 @@ const user = {
                 name: data.name,
                 username: data.username,
                 departmentId: data.departmentId,
-                roles: { set: [], connect: roles.map((role) => ({ id: role.id })) },
+                roles: { set: [], connect: roles.map((role) => ({ id: role.id })) }
             },
-            include: inclusions.user,
+            include: inclusions.user
         })
     },
 
@@ -80,9 +81,9 @@ const user = {
         await prisma.user.update({
             where: { id: data.id },
             data: {
-                image: `https://app.agencyboz.com:4105/static/users/${data.id}/images/${data.filename}`,
+                image: `https://app.agencyboz.com:4105/static/users/${data.id}/images/${data.filename}`
             },
-            include: inclusions.user,
+            include: inclusions.user
         }),
 
     delete: async (data: { id: number | string }) => await prisma.user.delete({ where: { id: Number(data.id) } }),
@@ -93,8 +94,8 @@ const user = {
         login: async (googleUser: People) => await prisma.user.findFirst({ where: { googleId: googleUser.googleId }, include: inclusions.user }),
         link: async (user: User) => await prisma.user.update({ where: { id: user.id }, data: { googleId: user.googleId } }),
         updateToken: async (id: number, token: string) =>
-            await prisma.user.update({ where: { id }, data: { googleToken: token }, include: inclusions.user }),
-    },
+            await prisma.user.update({ where: { id }, data: { googleToken: token }, include: inclusions.user })
+    }
 }
 
 const department = {
@@ -104,17 +105,17 @@ const department = {
         await prisma.department.update({
             where: { id: data.id },
             data: { name: data.name },
-            include: inclusions.department,
+            include: inclusions.department
         }),
     delete: async (data: Department) =>
         await prisma.department.delete({
-            where: { id: data.id },
-        }),
+            where: { id: data.id }
+        })
 }
 
 const role = {
     list: async () => await prisma.role.findMany({ include: inclusions.role }),
-    new: async (role: NewServiceForm) => await prisma.role.create({ data: { name: role.name, tag: role.tag }, include: inclusions.role }),
+    new: async (role: NewServiceForm) => await prisma.role.create({ data: { name: role.name, tag: role.tag }, include: inclusions.role })
 }
 
 const customer = {
@@ -125,9 +126,9 @@ const customer = {
                 name: data.name,
                 recomendations: data.recomendations,
                 active: true,
-                services: { connect: data.services.map((service) => ({ id: service.id })) },
+                services: { connect: data.services.map((service) => ({ id: service.id })) }
             },
-            include: inclusions.customer,
+            include: inclusions.customer
         }),
     update: async (data: Customer & { services: Service[] }) =>
         await prisma.customer.update({
@@ -135,29 +136,29 @@ const customer = {
                 active: data.active,
                 name: data.name,
                 recomendations: data.recomendations,
-                services: { set: [], connect: data.services.map((service) => ({ id: service.id })) },
+                services: { set: [], connect: data.services.map((service) => ({ id: service.id })) }
             },
             where: { id: data.id },
-            include: inclusions.customer,
+            include: inclusions.customer
         }),
     image: async (data: { id: number; filename: string }) =>
         await prisma.customer.update({
             where: { id: data.id },
             data: {
-                image: `https://app.agencyboz.com:4105/static/customers/${data.id}/images/${data.filename}`,
+                image: `https://app.agencyboz.com:4105/static/customers/${data.id}/images/${data.filename}`
             },
-            include: inclusions.customer,
+            include: inclusions.customer
         }),
     delete: async (data: Customer) =>
         await prisma.customer.delete({
-            where: { id: data.id },
+            where: { id: data.id }
         }),
     toggleStatus: async (customer: Customer) =>
         await prisma.customer.update({
             data: { active: !customer.active },
             where: { id: customer.id },
-            include: inclusions.customer,
-        }),
+            include: inclusions.customer
+        })
 }
 
 const service = {
@@ -166,20 +167,20 @@ const service = {
         await prisma.service.create({
             data: {
                 name: data.name,
-                tag: data.tag,
+                tag: data.tag
             },
-            include: inclusions.service,
+            include: inclusions.service
         }),
     update: async (data: Service) =>
         await prisma.service.update({
             where: { id: data.id },
             data: { name: data.name, tag: data.tag },
-            include: inclusions.service,
+            include: inclusions.service
         }),
     delete: async (data: Service) =>
         await prisma.service.delete({
-            where: { id: data.id },
-        }),
+            where: { id: data.id }
+        })
 }
 
 const log = {
@@ -211,7 +212,7 @@ const qrcode = {
     new: async (data: NewQrCodeForm) => {
         const io = getIoInstance()
         const qr = await prisma.qrCode.create({
-            data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id },
+            data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id }
         })
         const customer = await prisma.customer.findUnique({ where: { id: data.customer.id }, include: inclusions.customer })
         io.emit("customer:update", customer)
@@ -221,7 +222,7 @@ const qrcode = {
         const io = getIoInstance()
         const qr = await prisma.qrCode.update({
             where: { id: data.id },
-            data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id },
+            data: { name: data.name, code: data.code, userId: data.user.id, customerId: data.customer.id }
         })
         const customer = await prisma.customer.findUnique({ where: { id: data.customer.id }, include: inclusions.customer })
         io.emit("customer:update", customer)
@@ -229,7 +230,7 @@ const qrcode = {
     },
     list: async () => await prisma.qrCode.findMany({ include: inclusions.qrcode }),
 
-    delete: async (qrcode: QrCode) => await prisma.qrCode.delete({ where: { id: qrcode.id } }),
+    delete: async (qrcode: QrCode) => await prisma.qrCode.delete({ where: { id: qrcode.id } })
 }
 
 const warning = {
@@ -240,9 +241,9 @@ const warning = {
                 text: data.text,
                 date: new Date().getTime().toString(),
                 creatorId: data.creatorId,
-                confirmed: { connect: { id: data.creatorId } },
+                confirmed: { connect: { id: data.creatorId } }
             },
-            include: inclusions.warning,
+            include: inclusions.warning
         }),
 
     list: async () => prisma.warning.findMany({ include: inclusions.warning }),
@@ -251,15 +252,15 @@ const warning = {
         await prisma.warning.update({
             where: { id: warning.id },
             data: { confirmed: { set: [], connect: [...warning.confirmed.map((user) => ({ id: user.id })), { id: userId }] } },
-            include: inclusions.warning,
-        }),
+            include: inclusions.warning
+        })
 }
 
 const apiTester = {
     create: async (data: ApiTesterForm) =>
         await prisma.apiTester.create({
             data: { baseUrl: data.baseUrl, name: data.name, socket: data.socket, creatorId: data.userId, port: data.port },
-            include: inclusions.apiTester,
+            include: inclusions.apiTester
         }),
 
     list: async () => prisma.apiTester.findMany({ include: inclusions.apiTester }),
@@ -272,9 +273,9 @@ const apiTester = {
                 name: data.name,
                 port: data.port,
                 socket: data.socket,
-                description: data.description,
+                description: data.description
             },
-            include: inclusions.apiTester,
+            include: inclusions.apiTester
         }),
 
     remove: async (data: ApiTester) => await prisma.apiTester.delete({ where: { id: data.id } }),
@@ -291,8 +292,8 @@ const apiTester = {
                     creatorId: data.userId,
                     apiId: data.apiId,
                     payload: "",
-                    response: "",
-                },
+                    response: ""
+                }
             }),
         update: async (data: TesterRequest) =>
             await prisma.testerRequest.update({
@@ -302,10 +303,10 @@ const apiTester = {
                     name: data.name,
                     payload: data.payload,
                     response: data.response,
-                    url: data.url,
-                },
+                    url: data.url
+                }
             }),
-        delete: async (data: TesterRequest) => await prisma.testerRequest.delete({ where: { id: data.id } }),
+        delete: async (data: TesterRequest) => await prisma.testerRequest.delete({ where: { id: data.id } })
     },
 
     events: {
@@ -317,8 +318,8 @@ const apiTester = {
                     event: data.event,
 
                     creatorId: data.userId,
-                    apiId: data.apiId,
-                },
+                    apiId: data.apiId
+                }
             }),
 
         update: async (data: TestarEvent) =>
@@ -327,11 +328,50 @@ const apiTester = {
                 data: {
                     name: data.name,
                     payload: data.payload,
-                    event: data.event,
-                },
+                    event: data.event
+                }
             }),
-        delete: async (data: TestarEvent) => await prisma.testarEvent.delete({ where: { id: data.id } }),
-    },
+        delete: async (data: TestarEvent) => await prisma.testarEvent.delete({ where: { id: data.id } })
+    }
 }
 
-export default { user, department, role, service, customer, log, qrcode, warning, apiTester }
+const theme = {
+    create: async (data: NewTheme) =>
+        await prisma.theme.create({
+            data: {
+                userId: data.userId,
+                name: data.name,
+                primary: data.primary,
+                secondary: data.secondary,
+                terciary: data.terciary,
+                success: data.success,
+                warning: data.warning,
+                background_primary: data.background.primary,
+                background_secondary: data.background.secondary,
+                text_primary: data.text.primary,
+                text_secondary: data.text.secondary,
+                text_terciary: data.text.terciary,
+                timestamp: new Date().getTime().toString()
+            },
+            include: inclusions.theme
+        }),
+    list: async () => await prisma.theme.findMany({ include: inclusions.theme }),
+    activate: async (id: number) => prisma.theme.update({ where: { id }, data: { active: true }, include: inclusions.theme }),
+    deactivate: async () => prisma.theme.updateMany({ data: { active: false } }),
+    update: async (id: number, data: NewTheme) => await prisma.theme.update({
+        where: { id }, data: {
+            name: data.name,
+            primary: data.primary,
+            secondary: data.secondary,
+            terciary: data.terciary,
+            success: data.success,
+            warning: data.warning,
+            background_primary: data.background.primary,
+            background_secondary: data.background.secondary,
+            text_primary: data.text.primary,
+            text_secondary: data.text.secondary,
+            text_terciary: data.text.terciary,
+    }, include: inclusions.theme})
+}
+
+export default { user, department, role, service, customer, log, qrcode, warning, apiTester, theme }

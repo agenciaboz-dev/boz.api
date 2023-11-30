@@ -16,6 +16,7 @@ import github from "../github"
 import google from "../google"
 import warning from "./warning"
 import wakeup from "./wakeup"
+import theme from "./theme"
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -68,7 +69,7 @@ const clients: ClientBag = {
     list,
     add,
     remove,
-    update,
+    update
 }
 
 export const handleSocket = (socket: Socket) => {
@@ -87,7 +88,7 @@ export const handleSocket = (socket: Socket) => {
         }
     })
 
-    socket.on("client:sync", async (user: User & { status: number }) => client.sync(user, clients, socket))
+    socket.on("client:sync", async (user: User & { status: number; roles: Role[] }) => client.sync(user, clients, socket))
 
     socket.on("user:logout", (data) => user.logout(socket, clients, data))
 
@@ -140,4 +141,10 @@ export const handleSocket = (socket: Socket) => {
     socket.on("wakeup:event:new", (data) => wakeup.events.create(socket, data))
     socket.on("wakeup:event:update", (data) => wakeup.events.update(socket, data))
     socket.on("wakeup:event:delete", (data) => wakeup.events.delete(socket, data))
+
+    socket.on("theme:list", () => theme.list(socket))
+    socket.on("theme:new", (data) => theme.create(socket, data))
+    socket.on("theme:activate", (data) => theme.activate(socket, data.id))
+    socket.on("theme:deactivate", () => theme.deactivate(socket))
+    socket.on("theme:update", (data) => theme.update(socket, data, data.id))
 }

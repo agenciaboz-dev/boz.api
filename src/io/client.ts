@@ -10,6 +10,9 @@ const prisma = databaseHandler
 const sync = async (user: User & { status: number; roles: Role[] }, clients: ClientBag, socket: Socket) => {
     const io = getIoInstance()
 
+    const themes = await prisma.theme.list()
+    socket.emit("theme:list", themes)
+
     const lastestRelease = await github.lastestRelease()
     socket.emit("electron:latest", lastestRelease)
 
