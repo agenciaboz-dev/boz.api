@@ -6,7 +6,7 @@ import qrcode from "./qrcode";
 import role from "./role";
 import service from "./service";
 import user from "./user";
-import warnings from "./user";
+import warning from "./warning";
 
 export default {
   apiTester,
@@ -17,5 +17,5 @@ export default {
   role,
   service,
   user,
-  warnings,
+  warning,
 };
