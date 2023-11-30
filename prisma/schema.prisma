@@ -30,6 +30,7 @@ model User {
     apiTesters      ApiTester[]
     testerRequests  TesterRequest[]
     testerEvents    TestarEvent[]
+    themes          Theme[]
 
     googleId        String?
     googleToken     String?     @db.Text
@@ -159,4 +160,25 @@ model TestarEvent {
 
     creatorId       Int
     creator         User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+}
+
+model Theme {
+    id              Int         @id @default(autoincrement())
+    name            String
+    active          Boolean     @default(false)
+    timestamp       String      @db.Text
+
+    primary         String
+    secondary       String
+    terciary        String
+    success         String
+    warning         String
+    background_primary  String
+    background_secondary    String
+    text_primary    String
+    text_secondary  String
+    text_terciary   String
+
+    userId          Int
+    user            User        @relation(fields: [userId], references: [id])
 }
