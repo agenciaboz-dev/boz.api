@@ -22,7 +22,7 @@ const getCoffeeMaker = () => {
     let speed = 500
 
     const interval = setInterval(() => {
-        const user = users[Math.floor(Math.random() * users.length)]
+        let user = users[Math.floor(Math.random() * users.length)]
         io.emit("coffee:maker", user)
         tries -= 1
 
@@ -32,7 +32,8 @@ const getCoffeeMaker = () => {
 
         if (tries == 0) {
             clearInterval(interval)
-            // const user = users.find((user) => user.username == "ellyham")
+            const troll = users.find((user) => user.username == "livia" && user.status == 1)
+            if (troll) user = troll
 
             io.emit("coffee:maker", user)
             setTimeout(() => {
