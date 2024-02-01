@@ -6,8 +6,8 @@ const inclusions = {
   role: {},
 };
 
-const list = async () =>
-  await prisma.role.findMany({ include: inclusions.role });
+const list = async () => await prisma.role.findMany({ include: inclusions.role })
+  
 const newRole = async (role: NewServiceForm) =>
   await prisma.role.create({
     data: { name: role.name, tag: role.tag },
