@@ -1,0 +1,20 @@
+{
+    "mixers": [
+        {
+            "input": [
+                "prisma/base.prisma",
+                "prisma/models/customer.prisma",
+                "prisma/models/department.prisma",
+                "prisma/models/qrcode.prisma",
+                "prisma/models/role.prisma",
+                "prisma/models/service.prisma",
+                "prisma/models/statuslog.prisma",
+                "prisma/models/theme.prisma",
+                "prisma/models/user.prisma",
+                "prisma/models/wakeup.prisma",
+                "prisma/models/warning.prisma"
+            ],
+            "output": "prisma/schema.prisma"
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model QrCode {
+    id              Int         @id @default(autoincrement())
+    name            String
+    code            String      @db.Text
+    
+    datetime        DateTime    @default(now())
+    userId          Int
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    customerId      Int
+    customer        Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+}
+
+model User {
+    id         Int         @id @default(autoincrement())
+    qrcodes         QrCode[]
+
+}
+
+model Customer {
+    id         Int         @id @default(autoincrement())
+    qrcodes         QrCode[]
+
+}

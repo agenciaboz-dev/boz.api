@@ -1,0 +1,22 @@
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id              Int         @id @default(autoincrement())
+    username        String      @unique
+    email           String      @unique
+    password        String
+    name            String
+    cpf             String
+    birth           DateTime
+    phone           String      @default("")
+    image           String      @default("") @db.Text
+
+    
+
+    googleId        String?
+    googleToken     String?     @db.Text
+
+}

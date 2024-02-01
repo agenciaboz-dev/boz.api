@@ -1,0 +1,38 @@
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model Warning {
+    id              Int         @id @default(autoincrement())
+    title           String
+    text            String      @db.Text
+    date            String
+
+    creatorId       Int
+    creator         User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)        
+
+    confirmed       User[]      @relation(name: "confirmed")
+    comments        Comment[]
+}
+
+model User {
+    id         Int         @id @default(autoincrement())
+    warnings        Warning[]
+    confirmedWarnings   Warning[]   @relation(name: "confirmed")
+    comments        Comment[]
+
+}
+
+model Comment {
+    id              Int         @id @default(autoincrement())
+    text            String      @db.Text
+    date            String
+
+    userId          Int
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    warningId       Int?
+    warning         Warning?    @relation(fields: [warningId], references: [id], onDelete: Cascade)
+
+}

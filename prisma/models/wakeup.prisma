@@ -1,0 +1,56 @@
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model ApiTester {
+    id              Int         @id @default(autoincrement())
+    name            String
+    socket          Boolean
+    baseUrl         String
+    port            String
+    description     String      @db.Text @default("")
+
+    requests        TesterRequest[]
+    events          TestarEvent[]
+
+    creatorId       Int         @default(2)
+    creator         User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+}
+
+model TesterRequest {
+    id              Int         @id @default(autoincrement())
+    name            String
+    url             String
+    method          String
+    payload         String      @db.Text
+    response        String      @db.Text
+
+    apiId           Int
+    api             ApiTester   @relation(fields: [apiId], references: [id], onDelete: Cascade)
+
+    creatorId       Int
+    creator         User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+}
+
+model TestarEvent {
+    id              Int         @id @default(autoincrement())
+    name            String
+    event           String
+    payload         String      @db.Text
+
+    apiId           Int
+    api             ApiTester   @relation(fields: [apiId], references: [id], onDelete: Cascade)
+
+    creatorId       Int
+    creator         User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id         Int         @id @default(autoincrement())
+    apiTesters      ApiTester[]
+    testerRequests  TesterRequest[]
+    testerEvents    TestarEvent[]
+
+}

@@ -1,0 +1,12 @@
+model Service {
+    id              Int         @id @default(autoincrement())
+    tag             String      @unique
+    name            String
+    customers       Customer[]
+}
+
+model Customer {
+    id         Int         @id @default(autoincrement())
+    services        Service[]
+
+}

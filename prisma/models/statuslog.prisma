@@ -1,0 +1,14 @@
+model StatusLog {
+    id              Int         @id @default(autoincrement())
+    status          Int
+    datetime        DateTime    @default(now())
+
+    userId          Int
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id         Int         @id @default(autoincrement())
+    statusLog       StatusLog[]
+
+}

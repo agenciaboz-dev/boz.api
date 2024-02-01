@@ -1,0 +1,13 @@
+model Role {
+    id              Int         @id @default(autoincrement())
+    tag             String      @unique
+    name            String
+
+    users           User[]
+}
+
+model User {
+    id         Int         @id @default(autoincrement())
+    roles           Role[]
+
+}
