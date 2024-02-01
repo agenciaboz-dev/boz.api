@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `ApiTester` MODIFY `creatorId` INTEGER NOT NULL DEFAULT 2;

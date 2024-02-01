@@ -7,7 +7,7 @@ import role from "./role"
 import service from "./service"
 import user from "./user"
 import warning from "./warning"
-import theme from "./theme"
+import project from "./project"
 
 export default {
     apiTester,
@@ -19,5 +19,5 @@ export default {
     service,
     user,
     warning,
-    theme
+    project,
 }

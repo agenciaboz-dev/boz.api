@@ -1,0 +1,44 @@
+model Project {
+    id          Int         @id @default(autoincrement())
+    name        String
+    github      String?
+    description String
+    deadline    String?
+
+    times_id    Int         @unique
+    times       Time        @relation(fields: [times_id], references: [id])
+
+    workers     Worker[]
+}
+
+model Worker {
+    id          Int         @id @default(autoincrement())
+    admin       Boolean     @default(false)
+    joined_date String
+    role        String
+
+    times       Time[]
+
+    user_id     Int
+    user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+    project_id  Int
+    project     Project     @relation(fields: [project_id], references: [id], onDelete: Cascade)
+}
+
+model Time {
+    id          Int         @id @default(autoincrement())
+    started     String
+    ended       String?
+    worked      String?
+
+    worker      Worker[]
+    project     Project?
+}
+
+model User {
+    id          Int         @id @default(autoincrement())
+
+
+    working_projects    Worker[]
+}

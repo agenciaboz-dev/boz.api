@@ -25,10 +25,10 @@ model User {
 	id Int @id @default(autoincrement())
 	departmentId Int 
 	department Department @relation(name: "DepartmentToUser", fields: [departmentId], references: [id], onDelete: Cascade)
+	working_projects Worker[] @relation(name: "UserToWorker")
 	qrcodes QrCode[] @relation(name: "QrCodeToUser")
 	roles Role[] @relation(name: "RoleToUser")
 	statusLog StatusLog[] @relation(name: "StatusLogToUser")
-	themes Theme[] @relation(name: "ThemeToUser")
 	username String @unique
 	email String @unique
 	password String 
@@ -45,6 +45,35 @@ model User {
 	warnings Warning[] @relation(name: "UserToWarning")
 	confirmedWarnings Warning[] @relation(name: "confirmed")
 	comments Comment[] @relation(name: "CommentToUser")
+}
+model Project {
+	id Int @id @default(autoincrement())
+	name String 
+	github String? 
+	description String 
+	deadline String? 
+	times_id Int @unique
+	times Time @relation(name: "ProjectToTime", fields: [times_id], references: [id])
+	workers Worker[] @relation(name: "ProjectToWorker")
+}
+model Worker {
+	id Int @id @default(autoincrement())
+	admin Boolean @default(false)
+	joined_date String 
+	role String 
+	times Time[] @relation(name: "TimeToWorker")
+	user_id Int 
+	user User @relation(name: "UserToWorker", fields: [user_id], references: [id], onDelete: Cascade)
+	project_id Int 
+	project Project @relation(name: "ProjectToWorker", fields: [project_id], references: [id], onDelete: Cascade)
+}
+model Time {
+	id Int @id @default(autoincrement())
+	started String 
+	ended String? 
+	worked String? 
+	worker Worker[] @relation(name: "TimeToWorker")
+	project Project? @relation(name: "ProjectToTime")
 }
 model QrCode {
 	id Int @id @default(autoincrement())
@@ -74,24 +103,6 @@ model StatusLog {
 	datetime DateTime @default(now())
 	userId Int 
 	user User @relation(name: "StatusLogToUser", fields: [userId], references: [id], onDelete: Cascade)
-}
-model Theme {
-	id Int @id @default(autoincrement())
-	name String 
-	active Boolean @default(false)
-	timestamp String @db.Text
-	primary String 
-	secondary String 
-	terciary String 
-	success String 
-	warning String 
-	background_primary String 
-	background_secondary String 
-	text_primary String 
-	text_secondary String 
-	text_terciary String 
-	userId Int 
-	user User @relation(name: "ThemeToUser", fields: [userId], references: [id])
 }
 model ApiTester {
 	id Int @id @default(autoincrement())

@@ -1,14 +1,17 @@
 import { PrismaClient, User } from "@prisma/client";
+import project from "./project"
 
 const prisma = new PrismaClient();
 
-const inclusions = {
-  user: {
-    roles: true,
-    department: true,
-    qrcodes: { include: { user: true, customer: true } },
-  },
-};
+export const inclusions = {
+    user: {
+        roles: true,
+        department: true,
+        qrcodes: { include: { user: true, customer: true } },
+        working_projects: { include: { project: { include: project.include }, times: true } },
+    },
+}
+
 const login = async (data: { login: string; password: string }) =>
   await prisma.user.findFirst({
     where: {
@@ -22,8 +25,7 @@ const login = async (data: { login: string; password: string }) =>
     include: inclusions.user,
   });
 
-const list = async () =>
-  await prisma.user.findMany({ include: inclusions.user });
+const list = async () => await prisma.user.findMany({ include: inclusions.user })
 
 const find = {
   username: async (username: string) =>
