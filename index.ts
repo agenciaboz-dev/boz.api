@@ -46,7 +46,6 @@ try {
         console.log(`[server]: Server is running at https://${port}`)
     })
 } catch (e) {
-    console.log(e)
     const server = http.createServer(app)
 
     initializeIoServer(server)
