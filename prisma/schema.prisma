@@ -50,7 +50,7 @@ model Project {
 	id Int @id @default(autoincrement())
 	name String 
 	github String? 
-	description String @db.Text
+	description String? @db.Text
 	deadline String? 
 	times_id Int @unique
 	times Time @relation(name: "ProjectToTime", fields: [times_id], references: [id])
