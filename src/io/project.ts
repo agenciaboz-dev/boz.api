@@ -1,5 +1,6 @@
 import { Socket } from "socket.io"
 import databaseHandler from "../databaseHandler"
+import { Time } from "@prisma/client"
 
 const create = async (socket: Socket, data: NewProjectForm) => {
     console.log(data)
@@ -29,4 +30,31 @@ const remove = async (socket: Socket, id: number) => {
     }
 }
 
-export default { create, list, remove }
+const play = async (socket: Socket, worker_id: number) => {
+    try {
+        const worker = await databaseHandler.project.play(worker_id)
+        const project = await databaseHandler.project.findWorkerProject(worker.id)
+        socket.emit("project:play:success", project)
+        socket.broadcast.emit("project:play:success", project)
+    } catch (error) {
+        console.log(error)
+        socket.emit("project:play:error", error?.toString())
+    }
+}
+
+const stop = async (socket: Socket, time: Time) => {
+    try {
+        const updated_time = await databaseHandler.project.stop(time)
+        if (updated_time.worker_id) {
+            const project = await databaseHandler.project.findWorkerProject(updated_time.worker_id)
+            console.log(project)
+            socket.emit("project:stop:success", project)
+            socket.broadcast.emit("project:stop:success", project)
+        }
+    } catch (error) {
+        console.log(error)
+        socket.emit("project:stop:error", error?.toString())
+    }
+}
+
+export default { create, list, remove, play, stop }

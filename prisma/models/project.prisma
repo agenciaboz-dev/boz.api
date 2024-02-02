@@ -32,7 +32,8 @@ model Time {
     ended       String?
     worked      String?
 
-    worker      Worker[]
+    worker_id   Int?
+    worker      Worker?     @relation(fields: [worker_id], references: [id])
     project     Project?
 }
 

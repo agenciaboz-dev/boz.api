@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { Client, ClientBag } from "../definitions/client";
-import { Customer, Role, Service, User } from "@prisma/client";
+import { Customer, Role, Service, Time, User } from "@prisma/client"
 import user from "./user";
 // import zap from "./zap"
 import { Server as SocketIoServer } from "socket.io";
@@ -154,4 +154,6 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("project:new", (data: NewProjectForm) => project.create(socket, data))
     socket.on("project:delete", (id: number) => project.remove(socket, id))
+    socket.on("project:play", (worker_id: number) => project.play(socket, worker_id))
+    socket.on("project:stop", (time: Time) => project.stop(socket, time))
 }
