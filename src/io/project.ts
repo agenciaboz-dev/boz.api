@@ -2,6 +2,7 @@ import { Socket } from "socket.io"
 import databaseHandler from "../databaseHandler"
 import { Time } from "@prisma/client"
 import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
+import { ClientBag } from "../definitions/client"
 
 const create = async (socket: Socket, data: NewProjectForm) => {
     console.log(data)
@@ -31,14 +32,21 @@ const remove = async (socket: Socket, id: number) => {
     }
 }
 
-const play = async (socket: Socket, worker_id: number) => {
+const play = async (socket: Socket, worker_id: number, clients: ClientBag) => {
     try {
         const worker = await databaseHandler.project.play(worker_id)
         const project = await databaseHandler.project.findWorkerProject(worker.id)
         socket.emit("project:play:success", project)
         socket.broadcast.emit("project:play:success", project)
 
-        const user = await databaseHandler.user.find.worker(worker_id)
+        let user = await databaseHandler.user.find.worker(worker_id)
+        if (user) {
+            const client = clients.find(user.id)
+            if (client) {
+                user = { ...client.user, ...user }
+            }
+        }
+        socket.emit("user:update", user)
         socket.emit("user:update", user)
     } catch (error) {
         console.log(error)
@@ -46,7 +54,7 @@ const play = async (socket: Socket, worker_id: number) => {
     }
 }
 
-const stop = async (socket: Socket, time: Time) => {
+const stop = async (socket: Socket, time: Time, clients: ClientBag) => {
     try {
         const updated_time = await databaseHandler.project.stop(time)
         if (updated_time.worker_id) {
@@ -55,7 +63,13 @@ const stop = async (socket: Socket, time: Time) => {
             socket.emit("project:stop:success", project)
             socket.broadcast.emit("project:stop:success", project)
 
-            const user = await databaseHandler.user.find.worker(updated_time.worker_id)
+            let user = await databaseHandler.user.find.worker(updated_time.worker_id)
+            if (user) {
+                const client = clients.find(user.id)
+                if (client) {
+                    user = { ...client.user, ...user }
+                }
+            }
             socket.emit("user:update", user)
         }
     } catch (error) {
