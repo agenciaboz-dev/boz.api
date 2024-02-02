@@ -1,8 +1,13 @@
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
 model Project {
     id          Int         @id @default(autoincrement())
     name        String
     github      String?
-    description String
+    description String?     @db.Text
     deadline    String?
 
     times_id    Int         @unique
