@@ -9,5 +9,6 @@ declare interface NewProjectForm {
 
 declare interface NewWorkerForm {
     user_id: number
+    role: string
     admin?: boolean
 }

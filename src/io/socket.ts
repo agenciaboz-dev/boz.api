@@ -153,4 +153,5 @@ export const handleSocket = (socket: Socket) => {
     // socket.on("theme:update", (data) => theme.update(socket, data, data.id))
 
     socket.on("project:new", (data: NewProjectForm) => project.create(socket, data))
+    socket.on("project:delete", (id: number) => project.remove(socket, id))
 }

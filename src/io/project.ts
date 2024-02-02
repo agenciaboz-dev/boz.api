@@ -2,6 +2,7 @@ import { Socket } from "socket.io"
 import databaseHandler from "../databaseHandler"
 
 const create = async (socket: Socket, data: NewProjectForm) => {
+    console.log(data)
     try {
         const project = await databaseHandler.project.create(data)
         socket.emit("project:new:success", project)
@@ -17,4 +18,15 @@ const list = async (socket: Socket) => {
     socket.emit("project:list", projects)
 }
 
-export default { create, list }
+const remove = async (socket: Socket, id: number) => {
+    try {
+        const deleted = await databaseHandler.project.remove(id)
+        socket.emit("project:delete:success", deleted)
+        socket.broadcast.emit("project:delete", deleted)
+    } catch (error) {
+        console.log(error)
+        socket.emit("project:delete:error", error?.toString())
+    }
+}
+
+export default { create, list, remove }

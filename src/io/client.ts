@@ -9,9 +9,9 @@ const prisma = databaseHandler
 
 const sync = async (user: User & { status: number; roles: Role[] }, clients: ClientBag, socket: Socket) => {
     const io = getIoInstance()
-
-    // const projects = await prisma.project.list()
-    // socket.emit("project:list", projects)
+    //
+    const projects = await prisma.project.list()
+    socket.emit("project:list", projects)
 
     // const themes = await prisma.theme.list()
     // socket.emit("theme:list", themes)
