@@ -18,6 +18,7 @@ import warning from "./warning";
 import wakeup from "./wakeup";
 // import theme from "./theme";
 import project from "./project"
+import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -156,4 +157,5 @@ export const handleSocket = (socket: Socket) => {
     socket.on("project:delete", (id: number) => project.remove(socket, id))
     socket.on("project:play", (worker_id: number) => project.play(socket, worker_id))
     socket.on("project:stop", (time: Time) => project.stop(socket, time))
+    socket.on("project:update", (data: UpdateProjectForm, id: number) => project.update(socket, data, id))
 }

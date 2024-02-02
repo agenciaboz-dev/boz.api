@@ -1,4 +1,5 @@
 import { PrismaClient, Time } from "@prisma/client"
+import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
 
 const prisma = new PrismaClient()
 
@@ -69,4 +70,32 @@ const find = async (id: number) => await prisma.project.findUnique({ where: { id
 
 const findWorkerProject = async (id: number) => await prisma.project.findFirst({ where: { workers: { some: { id } } }, include })
 
-export default { include, create, list, remove, play, find, stop, findWorkerProject }
+const update = async (data: UpdateProjectForm, id: number) =>
+    await prisma.project.update({
+        where: { id },
+        data: {
+            deadline: data.deadline,
+            description: data.description,
+            github: data.github,
+            name: data.name,
+            workers: {
+                deleteMany: { project_id: id },
+                create: data.workers.map((worker) => ({
+                    joined_date: worker.joined_date,
+                    role: worker.role,
+                    user_id: worker.user_id,
+                    admin: worker.admin,
+                    times: {
+                        create: worker.times.map((time) => ({
+                            started: time.started,
+                            ended: time.ended,
+                            worked: time.worked,
+                        })),
+                    },
+                })),
+            },
+        },
+        include,
+    })
+
+export default { include, create, list, remove, play, find, stop, findWorkerProject, update }
