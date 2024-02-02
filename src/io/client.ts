@@ -6,7 +6,6 @@ import { coffeeList, getIoInstance } from "./socket"
 import github from "../github"
 
 const prisma = databaseHandler
-console.log(prisma)
 
 const sync = async (user: User & { status: number; roles: Role[] }, clients: ClientBag, socket: Socket) => {
     const io = getIoInstance()
