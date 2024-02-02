@@ -132,7 +132,7 @@ export const handleSocket = (socket: Socket) => {
     socket.on("google:login", (data) => google.login.login(socket, data))
     socket.on("google:exchange", (data) => google.login.exchangeCode(socket, data))
     socket.on("google:link", (user) => google.person.link(socket, user))
-    socket.on("google:calendar", (token) => google.calendar.getCalendar(socket, token))
+    // socket.on("google:calendar", (token) => google.calendar.getCalendar(socket, token))
 
     socket.on("warning:new", (data) => warning.create(socket, data))
     socket.on("warning:confirm", (data) => warning.confirm(socket, data.id, data.warning))
