@@ -5,7 +5,6 @@ import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
 import { ClientBag } from "../definitions/client"
 
 const create = async (socket: Socket, data: NewProjectForm) => {
-    console.log(data)
     try {
         const project = await databaseHandler.project.create(data)
         socket.emit("project:new:success", project)
@@ -44,6 +43,7 @@ const play = async (socket: Socket, worker_id: number, clients: ClientBag) => {
             const client = clients.find(user.id)
             if (client) {
                 user = { ...client.user, ...user }
+                clients.update(client, { ...client.user, ...user })
             }
         }
         socket.emit("user:update", user)
@@ -59,7 +59,6 @@ const stop = async (socket: Socket, time: Time, clients: ClientBag) => {
         const updated_time = await databaseHandler.project.stop(time)
         if (updated_time.worker_id) {
             const project = await databaseHandler.project.findWorkerProject(updated_time.worker_id)
-            console.log(project)
             socket.emit("project:stop:success", project)
             socket.broadcast.emit("project:stop:success", project)
 
@@ -68,6 +67,7 @@ const stop = async (socket: Socket, time: Time, clients: ClientBag) => {
                 const client = clients.find(user.id)
                 if (client) {
                     user = { ...client.user, ...user }
+                    clients.update(client, { ...client.user, ...user })
                 }
             }
             socket.emit("user:update", user)
@@ -79,7 +79,6 @@ const stop = async (socket: Socket, time: Time, clients: ClientBag) => {
 }
 
 const update = async (socket: Socket, data: UpdateProjectForm, id: number) => {
-    console.log(data)
     try {
         const project = await databaseHandler.project.update(data, id)
         socket.emit("project:new:success", project)

@@ -31,6 +31,7 @@ const find = {
         }),
     worker: async (worker_id: number) =>
         await prisma.user.findFirst({ where: { working_projects: { some: { id: worker_id } } }, include: inclusions.user }),
+    id: async (id: number) => await prisma.user.findUnique({ where: { id }, include: inclusions.user }),
 }
 
 const newUser = async (data: NewUserForm) => {

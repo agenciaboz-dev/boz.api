@@ -82,14 +82,45 @@ export const handleSocket = (socket: Socket) => {
 
     console.log(`new connection: ${socket.id}`)
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async (reason) => {
         console.log(`disconnected: ${socket.id}`)
+        console.log({ reason })
         const client = clients.get(socket)
+
+        const stopWork = (client: Client) => {
+            const time = client.user.working_projects
+                ?.find((item) => !!item.times.length && !item.times[item.times.length - 1].ended)
+                ?.times.find((time) => !time.ended)
+
+            if (time) {
+                console.log("stopping user work")
+                project.stop(socket, time, clients)
+            }
+        }
 
         if (client) {
             user.logout(socket, clients, client.user)
 
-            if (client.user) coffeeList = coffeeList.filter((user) => user.id != client.user.id)
+            if (client.user) {
+                coffeeList = coffeeList.filter((user) => user.id != client.user.id)
+
+                if (reason == "transport close") {
+                    stopWork(client)
+                }
+
+                if (reason == "transport error" || reason == "ping timeout") {
+                    console.log("disconnect because of error, stopping work on 5 minutes")
+                    setTimeout(() => {
+                        const _client = clients.find(client.user.id)
+                        if (!_client) {
+                            console.log("user still disconnected")
+                            stopWork(client)
+                        } else {
+                            console.log("user is not disconnected, not stopping his work")
+                        }
+                    }, 5 * 60 * 1000)
+                }
+            }
         }
     })
 

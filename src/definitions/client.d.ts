@@ -1,9 +1,9 @@
-import { User } from "@prisma/client"
+import { Time, User, Worker } from "@prisma/client"
 import { Socket } from "socket.io"
 
 declare interface Client {
     socket: Socket
-    user: User & { status: number }
+    user: User & { status: number } & { working_projects?: (Worker & { times: Time[] })[] }
 }
 
 declare interface ClientBag {
