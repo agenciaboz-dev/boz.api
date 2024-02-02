@@ -37,6 +37,9 @@ const play = async (socket: Socket, worker_id: number) => {
         const project = await databaseHandler.project.findWorkerProject(worker.id)
         socket.emit("project:play:success", project)
         socket.broadcast.emit("project:play:success", project)
+
+        const user = await databaseHandler.user.find.worker(worker_id)
+        socket.emit("user:update", user)
     } catch (error) {
         console.log(error)
         socket.emit("project:play:error", error?.toString())
@@ -51,6 +54,9 @@ const stop = async (socket: Socket, time: Time) => {
             console.log(project)
             socket.emit("project:stop:success", project)
             socket.broadcast.emit("project:stop:success", project)
+
+            const user = await databaseHandler.user.find.worker(updated_time.worker_id)
+            socket.emit("user:update", user)
         }
     } catch (error) {
         console.log(error)
