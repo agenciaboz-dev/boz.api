@@ -25,4 +25,24 @@ router.post("/new", async (request: Request, response: Response) => {
   }
 });
 
+router.post("/update", async (request: Request, response: Response) => {
+    const data = request.body as UserRoleForm
+
+    const role = await databaseHandler.role.update(data, data.id)
+
+    const io = getIoInstance()
+    io.emit("role:new", role)
+    response.json(role)
+})
+
+router.post("/delete", async (request: Request, response: Response) => {
+    const data = request.body
+
+    const deleted = await databaseHandler.role.remove(data.id)
+
+    const io = getIoInstance()
+    io.emit("role:delete", deleted)
+    response.json(deleted)
+})
+
 export default router;

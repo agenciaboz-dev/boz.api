@@ -100,6 +100,7 @@ model Role {
 	id Int @id @default(autoincrement())
 	tag String @unique
 	name String 
+	project_roles String? @db.Text
 	users User[] @relation(name: "RoleToUser")
 }
 model Service {
