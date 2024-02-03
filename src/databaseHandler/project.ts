@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 
 const list = async () => await prisma.project.findMany({ include })
 const worker_include = { times: true, user: true }
-export const include = { times: true, workers: { include: worker_include } }
+export const include = { times: true, workers: { include: worker_include }, links: true }
 
 const create = async (data: NewProjectForm) =>
     await prisma.project.create({

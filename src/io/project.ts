@@ -9,6 +9,10 @@ const create = async (socket: Socket, data: NewProjectForm) => {
         const project = await databaseHandler.project.create(data)
         socket.emit("project:new:success", project)
         socket.broadcast.emit("project:new", project)
+
+        const customer = await databaseHandler.customer.find(project.customer_id)
+        socket.emit("customer:update", customer)
+        socket.broadcast.emit("customer:update", customer)
     } catch (error) {
         console.log(error)
         socket.emit("project:new:error", error?.toString())
@@ -25,6 +29,10 @@ const remove = async (socket: Socket, id: number) => {
         const deleted = await databaseHandler.project.remove(id)
         socket.emit("project:delete:success", deleted)
         socket.broadcast.emit("project:delete", deleted)
+
+        const customer = await databaseHandler.customer.find(deleted.customer_id)
+        socket.emit("customer:update", customer)
+        socket.broadcast.emit("customer:update", customer)
     } catch (error) {
         console.log(error)
         socket.emit("project:delete:error", error?.toString())
@@ -83,6 +91,10 @@ const update = async (socket: Socket, data: UpdateProjectForm, id: number) => {
         const project = await databaseHandler.project.update(data, id)
         socket.emit("project:new:success", project)
         socket.broadcast.emit("project:new", project)
+
+        const customer = await databaseHandler.customer.find(project.customer_id)
+        socket.emit("customer:update", customer)
+        socket.broadcast.emit("customer:update", customer)
     } catch (error) {
         console.log(error)
         socket.emit("project:new:error", error?.toString())

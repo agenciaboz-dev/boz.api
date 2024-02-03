@@ -64,11 +64,14 @@ const toggleStatus = async (customer: Customer) =>
     include: inclusions.customer,
   });
 
+const find = async (id: number) => await prisma.customer.findUnique({ where: { id }, include: inclusions.customer })
+
 export default {
-  list,
-  newCustomer,
-  update,
-  image,
-  deleteCustomer,
-  toggleStatus,
-};
+    list,
+    newCustomer,
+    update,
+    image,
+    deleteCustomer,
+    toggleStatus,
+    find,
+}
