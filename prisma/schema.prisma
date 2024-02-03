@@ -13,6 +13,7 @@ model Customer {
 	active Boolean 
 	recomendations String @db.Text
 	image String @default("") @db.Text
+	projects Project[] @relation(name: "CustomerToProject")
 	qrcodes QrCode[] @relation(name: "CustomerToQrCode")
 	services Service[] @relation(name: "CustomerToService")
 }
@@ -49,18 +50,19 @@ model User {
 model Project {
 	id Int @id @default(autoincrement())
 	name String 
-	github String? 
 	description String? @db.Text
 	deadline String? 
 	times_id Int @unique
-	times Time @relation(name: "ProjectToTime", fields: [times_id], references: [id])
+	times Time @relation(name: "ProjectToTime", fields: [times_id], references: [id], onDelete: Cascade)
+	customer_id Int 
+	customer Customer @relation(name: "CustomerToProject", fields: [customer_id], references: [id], onDelete: Cascade)
 	workers Worker[] @relation(name: "ProjectToWorker")
+	links Link[] @relation(name: "LinkToProject")
 }
 model Worker {
 	id Int @id @default(autoincrement())
 	admin Boolean @default(false)
 	joined_date String 
-	role String 
 	times Time[] @relation(name: "TimeToWorker")
 	user_id Int 
 	user User @relation(name: "UserToWorker", fields: [user_id], references: [id], onDelete: Cascade)
@@ -72,9 +74,17 @@ model Time {
 	started String 
 	ended String? 
 	worked String? 
+	role String? 
 	worker_id Int? 
-	worker Worker? @relation(name: "TimeToWorker", fields: [worker_id], references: [id])
+	worker Worker? @relation(name: "TimeToWorker", fields: [worker_id], references: [id], onDelete: Cascade)
 	project Project? @relation(name: "ProjectToTime")
+}
+model Link {
+	id Int @id @default(autoincrement())
+	name String? 
+	url String @db.Text
+	project_id Int? 
+	proeject Project? @relation(name: "LinkToProject", fields: [project_id], references: [id], onDelete: Cascade)
 }
 model QrCode {
 	id Int @id @default(autoincrement())

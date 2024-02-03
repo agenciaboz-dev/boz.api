@@ -1,14 +1,16 @@
 import { Customer, PrismaClient, Service } from "@prisma/client";
 import { NewCustomerForm } from "../definitions/NewCustomerForm";
+import { include as project_inclusions } from "./project"
 
 const prisma = new PrismaClient();
 
 const inclusions = {
-  customer: {
-    services: true,
-    qrcodes: { include: { user: true, customer: true } },
-  },
-};
+    customer: {
+        services: true,
+        qrcodes: { include: { user: true, customer: true } },
+        projects: { include: project_inclusions },
+    },
+}
 
 const list = async () =>
   await prisma.customer.findMany({ include: inclusions.customer });

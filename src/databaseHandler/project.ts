@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 
 const list = async () => await prisma.project.findMany({ include })
 const worker_include = { times: true, user: true }
-const include = { times: true, workers: { include: worker_include } }
+export const include = { times: true, workers: { include: worker_include } }
 
 const create = async (data: NewProjectForm) =>
     await prisma.project.create({
@@ -13,7 +13,8 @@ const create = async (data: NewProjectForm) =>
             name: data.name,
             description: data.description,
             deadline: data.deadline,
-            github: data.github,
+
+            customer: { connect: { id: data.customer_id } },
 
             times: {
                 create: {
@@ -28,18 +29,22 @@ const create = async (data: NewProjectForm) =>
                     user: { connect: { id: worker.user_id } },
                 })),
             },
+
+            links: {
+                create: data.links.map((link) => ({ name: link.name, url: link.url })),
+            },
         },
         include,
     })
 
 const remove = async (id: number) => await prisma.project.delete({ where: { id } })
 
-const play = async (worker_id: number) => {
-    const worker = await prisma.worker.findUnique({ where: { id: worker_id }, include: { times: true } })
+const play = async (data: PlayProjectForm) => {
+    const worker = await prisma.worker.findUnique({ where: { id: data.worker_id }, include: { times: true } })
 
     return await prisma.worker.update({
         where: {
-            id: worker_id,
+            id: data.worker_id,
         },
         data: {
             times: {
@@ -48,6 +53,7 @@ const play = async (worker_id: number) => {
                     ...worker!.times.map((time) => ({ started: time.started, ended: time.ended, worked: time.worked })),
                     {
                         started: new Date().getTime().toString(),
+                        role: data.role,
                     },
                 ],
             },
@@ -76,13 +82,14 @@ const update = async (data: UpdateProjectForm, id: number) =>
         data: {
             deadline: data.deadline,
             description: data.description,
-            github: data.github,
             name: data.name,
+
+            customer: { connect: { id: data.customer_id } },
+
             workers: {
                 deleteMany: { project_id: id },
                 create: data.workers.map((worker) => ({
                     joined_date: worker.joined_date,
-                    role: worker.role,
                     user_id: worker.user_id,
                     admin: worker.admin,
                     times: {
@@ -90,9 +97,15 @@ const update = async (data: UpdateProjectForm, id: number) =>
                             started: time.started,
                             ended: time.ended,
                             worked: time.worked,
+                            role: time.role,
                         })),
                     },
                 })),
+            },
+
+            links: {
+                deleteMany: { project_id: id },
+                create: data.links.map((link) => ({ name: link.name, url: link.url })),
             },
         },
         include,

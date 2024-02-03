@@ -31,14 +31,14 @@ const remove = async (socket: Socket, id: number) => {
     }
 }
 
-const play = async (socket: Socket, worker_id: number, clients: ClientBag) => {
+const play = async (socket: Socket, data: PlayProjectForm, clients: ClientBag) => {
     try {
-        const worker = await databaseHandler.project.play(worker_id)
+        const worker = await databaseHandler.project.play(data)
         const project = await databaseHandler.project.findWorkerProject(worker.id)
         socket.emit("project:play:success", project)
         socket.broadcast.emit("project:play:success", project)
 
-        let user = await databaseHandler.user.find.worker(worker_id)
+        let user = await databaseHandler.user.find.worker(data.worker_id)
         if (user) {
             const client = clients.find(user.id)
             if (client) {

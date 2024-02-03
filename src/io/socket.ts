@@ -186,7 +186,7 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("project:new", (data: NewProjectForm) => project.create(socket, data))
     socket.on("project:delete", (id: number) => project.remove(socket, id))
-    socket.on("project:play", (worker_id: number) => project.play(socket, worker_id, clients))
+    socket.on("project:play", (data: PlayProjectForm) => project.play(socket, data, clients))
     socket.on("project:stop", (time: Time) => project.stop(socket, time, clients))
     socket.on("project:update", (data: UpdateProjectForm, id: number) => project.update(socket, data, id))
 }

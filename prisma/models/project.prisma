@@ -6,21 +6,24 @@ datasource db {
 model Project {
     id          Int         @id @default(autoincrement())
     name        String
-    github      String?
     description String?     @db.Text
     deadline    String?
 
     times_id    Int         @unique
-    times       Time        @relation(fields: [times_id], references: [id])
+    times       Time        @relation(fields: [times_id], references: [id], onDelete: Cascade)
+
+    customer_id Int
+    customer    Customer    @relation(fields: [customer_id], references: [id], onDelete: Cascade)
 
     workers     Worker[]
+
+    links       Link[]
 }
 
 model Worker {
     id          Int         @id @default(autoincrement())
     admin       Boolean     @default(false)
     joined_date String
-    role        String
 
     times       Time[]
 
@@ -36,15 +39,28 @@ model Time {
     started     String
     ended       String?
     worked      String?
+    role        String?
 
     worker_id   Int?
-    worker      Worker?     @relation(fields: [worker_id], references: [id])
+    worker      Worker?     @relation(fields: [worker_id], references: [id], onDelete: Cascade)
     project     Project?
+}
+model Link {
+    id          Int         @id @default(autoincrement())
+    name        String?
+    url         String      @db.Text
+
+    project_id  Int?
+    proeject    Project?     @relation(fields: [project_id], references: [id], onDelete: Cascade)
 }
 
 model User {
     id          Int         @id @default(autoincrement())
 
-
     working_projects    Worker[]
+}
+
+model Customer {
+    id          Int         @id @default(autoincrement())
+    projects    Project[]
 }
