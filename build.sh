@@ -19,7 +19,7 @@ echo 'uploading package.json to server'
 scp package.json ${user}@agencyboz:${path}/
 
 echo 'syncing dependencies'
-ssh ${user}@agencyboz "source ~/.nvm/nvm.sh; cd ${path}; yarn"
+ssh ${user}@agencyboz "source ~/.nvm/nvm.sh; cd ${path}; yarn install --production --frozen-lockfile"
 
 echo 'Uploading prisma to server'
 scp -r prisma ${user}@agencyboz:${path}/
