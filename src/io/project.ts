@@ -55,7 +55,6 @@ const play = async (socket: Socket, data: PlayProjectForm, clients: ClientBag) =
             }
         }
         socket.emit("user:update", user)
-        socket.emit("user:update", user)
     } catch (error) {
         console.log(error)
         socket.emit("project:play:error", error?.toString())
