@@ -1,3 +1,5 @@
+import { Time, User, Worker } from "@prisma/client"
+
 declare interface NewProjectForm {
     name: string
     description?: string
@@ -21,6 +23,8 @@ declare interface LinkForm {
 }
 
 declare interface PlayProjectForm {
-    worker_id: number
+    worker: Worker & { times: Time[]; user: User }
     role: string
+    customer: Customer
+    project: Project
 }

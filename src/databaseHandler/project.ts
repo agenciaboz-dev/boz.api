@@ -1,5 +1,6 @@
 import { PrismaClient, Time } from "@prisma/client"
 import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
+import { NewProjectForm, PlayProjectForm } from "../definitions/NewProjectForm"
 
 const prisma = new PrismaClient()
 
@@ -40,17 +41,17 @@ const create = async (data: NewProjectForm) =>
 const remove = async (id: number) => await prisma.project.delete({ where: { id } })
 
 const play = async (data: PlayProjectForm) => {
-    const worker = await prisma.worker.findUnique({ where: { id: data.worker_id }, include: { times: true } })
+    // const worker = await prisma.worker.findUnique({ where: { id: data.worker_id }, include: { times: true } })
 
     return await prisma.worker.update({
         where: {
-            id: data.worker_id,
+            id: data.worker.id,
         },
         data: {
             times: {
                 set: [],
                 create: [
-                    ...worker!.times.map((time) => ({ started: time.started, ended: time.ended, worked: time.worked })),
+                    ...data.worker.times.map((time) => ({ started: time.started, ended: time.ended, worked: time.worked })),
                     {
                         started: new Date().getTime().toString(),
                         role: data.role,

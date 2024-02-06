@@ -19,6 +19,7 @@ import wakeup from "./wakeup";
 // import theme from "./theme";
 import project from "./project"
 import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
+import { NewProjectForm, PlayProjectForm } from "../definitions/NewProjectForm"
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null

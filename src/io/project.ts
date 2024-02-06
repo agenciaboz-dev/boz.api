@@ -3,6 +3,7 @@ import databaseHandler from "../databaseHandler"
 import { Time } from "@prisma/client"
 import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
 import { ClientBag } from "../definitions/client"
+import { NewProjectForm, PlayProjectForm } from "../definitions/NewProjectForm"
 
 const create = async (socket: Socket, data: NewProjectForm) => {
     try {
@@ -40,13 +41,11 @@ const remove = async (socket: Socket, id: number) => {
 }
 
 const play = async (socket: Socket, data: PlayProjectForm, clients: ClientBag) => {
+    console.log(data)
     try {
         const worker = await databaseHandler.project.play(data)
-        const project = await databaseHandler.project.findWorkerProject(worker.id)
-        socket.emit("project:play:success", project)
-        socket.broadcast.emit("project:play:success", project)
-
-        let user = await databaseHandler.user.find.worker(data.worker_id)
+        const project = await databaseHandler.project.find(data.project.id)
+        let user = await databaseHandler.user.find.id(data.worker.user.id)
         if (user) {
             const client = clients.find(user.id)
             if (client) {
@@ -54,13 +53,19 @@ const play = async (socket: Socket, data: PlayProjectForm, clients: ClientBag) =
                 clients.update(client, { ...client.user, ...user })
             }
         }
-        socket.emit("user:update", user)
+        const customer = await databaseHandler.customer.find(data.project.customer_id)
 
-        if (project) {
-            const customer = await databaseHandler.customer.find(project.customer_id)
-            socket.emit("customer:update", customer)
-            socket.broadcast.emit("customer:update", customer)
+        const response: PlayProjectForm = {
+            customer: customer,
+            project: project,
+            role: data.role,
+            worker: worker,
         }
+
+        socket.emit("project:play:success", response)
+        socket.emit("user:update", user)
+        socket.emit("customer:update", customer)
+        socket.broadcast.emit("customer:update", customer)
     } catch (error) {
         console.log(error)
         socket.emit("project:play:error", error?.toString())
@@ -68,12 +73,13 @@ const play = async (socket: Socket, data: PlayProjectForm, clients: ClientBag) =
 }
 
 const stop = async (socket: Socket, time: Time, clients: ClientBag) => {
+    console.log(time)
     try {
         const updated_time = await databaseHandler.project.stop(time)
         if (updated_time.worker_id) {
             const project = await databaseHandler.project.findWorkerProject(updated_time.worker_id)
             socket.emit("project:stop:success", project)
-            socket.broadcast.emit("project:stop:success", project)
+            socket.broadcast.emit("project:stop", project)
 
             let user = await databaseHandler.user.find.worker(updated_time.worker_id)
             if (user) {
