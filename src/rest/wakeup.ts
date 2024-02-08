@@ -19,6 +19,18 @@ router.post("/", async (request: Request, response: Response) => {
         delete apiResponse.request
         response.json(apiResponse)
     }
+
+    if (data.method == "PATCH") {
+        const apiResponse = await axios.patch(data.url, data.payload)
+        delete apiResponse.request
+        response.json(apiResponse)
+    }
+
+    if (data.method == "DELETE") {
+        const apiResponse = await axios.delete(data.url, data.payload)
+        delete apiResponse.request
+        response.json(apiResponse)
+    }
 })
 
 export default router
