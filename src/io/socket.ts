@@ -1,25 +1,26 @@
 import { Socket } from "socket.io";
 import { Client, ClientBag } from "../definitions/client";
-import { Customer, Role, Service, Time, User } from "@prisma/client"
-import user from "./user";
+import { Customer, PrismaClient, Role, Service, Time, User } from "@prisma/client"
+import user from "./user"
 // import zap from "./zap"
-import { Server as SocketIoServer } from "socket.io";
-import { Server as HttpServer } from "http";
-import { Server as HttpsServer } from "https";
-import client from "./client";
-import customer from "./customer";
-import department from "./department";
-import service from "./service";
-import qrcode from "./qrcode";
-import coffee from "./coffee";
-import github from "../github";
-import google from "../google";
-import warning from "./warning";
-import wakeup from "./wakeup";
+import { Server as SocketIoServer } from "socket.io"
+import { Server as HttpServer } from "http"
+import { Server as HttpsServer } from "https"
+import client from "./client"
+import customer from "./customer"
+import department from "./department"
+import service from "./service"
+import qrcode from "./qrcode"
+import coffee from "./coffee"
+import github from "../github"
+import google from "../google"
+import warning from "./warning"
+import wakeup from "./wakeup"
 // import theme from "./theme";
 import project from "./project"
 import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
 import { NewProjectForm, PlayProjectForm } from "../definitions/NewProjectForm"
+import databaseHandler from "../databaseHandler"
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -77,6 +78,23 @@ const clients: ClientBag = {
     remove,
     update,
 }
+
+// clean working projects without user
+const cleanWorkingProjects = async () => {
+    const prisma = new PrismaClient()
+    const working = await prisma.time.findMany({ where: { ended: null, NOT: { worker_id: null } } })
+    working.forEach(async (time) => {
+        const user = await databaseHandler.user.find.worker(time.worker_id!)
+        const client = clients.find(user!.id)
+        if (!client || client.user.status != 1) {
+            console.log(`stopping ${user?.name} work`)
+            await prisma.time.update({ where: { id: time.id }, data: { ended: new Date().getTime().toString() } })
+        }
+    })
+}
+
+setInterval(() => cleanWorkingProjects(), 5 * 60 * 1000)
+cleanWorkingProjects()
 
 export const handleSocket = (socket: Socket) => {
     const io = getIoInstance()
