@@ -49,9 +49,14 @@ const play = async (data: PlayProjectForm) => {
         },
         data: {
             times: {
-                set: [],
+                deleteMany: { worker_id: data.worker.id },
                 create: [
-                    ...data.worker.times.map((time) => ({ started: time.started, ended: time.ended, worked: time.worked })),
+                    ...data.worker.times.map((time) => ({
+                        started: time.started,
+                        ended: time.ended,
+                        worked: time.worked,
+                        role: time.role,
+                    })),
                     {
                         started: new Date().getTime().toString(),
                         role: data.role,

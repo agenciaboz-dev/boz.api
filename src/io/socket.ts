@@ -88,7 +88,7 @@ const cleanWorkingProjects = async () => {
         const client = clients.find(user!.id)
         if (!client || client.user.status != 1) {
             console.log(`stopping ${user?.name} work`)
-            await prisma.time.update({ where: { id: time.id }, data: { ended: new Date().getTime().toString() } })
+            databaseHandler.project.stop(time)
         }
     })
 }
