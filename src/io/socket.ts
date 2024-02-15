@@ -81,14 +81,28 @@ const clients: ClientBag = {
 
 // clean working projects without user
 const cleanWorkingProjects = async () => {
+    const doubleCheck = async (time: Time) =>
+        await prisma.time.findUnique({ where: { id: time.id, ended: null, NOT: { worker: null } }, include: { worker: true } })
     const prisma = new PrismaClient()
     const working = await prisma.time.findMany({ where: { ended: null, NOT: { worker_id: null } } })
     working.forEach(async (time) => {
         const user = await databaseHandler.user.find.worker(time.worker_id!)
         const client = clients.find(user!.id)
         if (!client || client.user.status != 1) {
-            console.log(`stopping ${user?.name} work`)
-            databaseHandler.project.stop(time)
+            const double_checked_time = await doubleCheck(time)
+            if (double_checked_time) {
+                const stopped = await databaseHandler.project.stop(double_checked_time)
+                console.log(
+                    `id: ${double_checked_time.id}. stopped ${user?.name} working as ${stopped.role} on ${stopped.ended}. started: ${double_checked_time.started}. worked: ${double_checked_time.worked}`
+                )
+                const worker = double_checked_time.worker
+                const project = await databaseHandler.project.find(worker!.project_id)
+                if (project) {
+                    io?.emit("project:update", project)
+                    const customer = await databaseHandler.customer.find(project.customer_id)
+                    io?.emit("customer:update", customer)
+                }
+            }
         }
     })
 }
