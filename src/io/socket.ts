@@ -122,6 +122,7 @@ export const handleSocket = (socket: Socket) => {
 
 
         if (client) {
+            cleanWorkingProjects()
             user.logout(socket, clients, client.user)
 
             if (client.user) {
