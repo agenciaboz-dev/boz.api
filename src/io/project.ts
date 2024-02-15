@@ -66,6 +66,9 @@ const play = async (socket: Socket, data: PlayProjectForm, clients: ClientBag) =
         socket.emit("user:update", user)
         socket.emit("customer:update", customer)
         socket.broadcast.emit("customer:update", customer)
+
+        socket.emit("project:update", project)
+        socket.broadcast.emit("project:update", project)
     } catch (error) {
         console.log(error)
         socket.emit("project:play:error", error?.toString())
@@ -95,6 +98,9 @@ const stop = async (socket: Socket, time: Time, clients: ClientBag) => {
                 const customer = await databaseHandler.customer.find(project.customer_id)
                 socket.emit("customer:update", customer)
                 socket.broadcast.emit("customer:update", customer)
+
+                socket.emit("project:update", project)
+                socket.broadcast.emit("project:update", project)
             }
         }
     } catch (error) {
