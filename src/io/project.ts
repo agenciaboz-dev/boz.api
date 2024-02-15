@@ -41,7 +41,6 @@ const remove = async (socket: Socket, id: number) => {
 }
 
 const play = async (socket: Socket, data: PlayProjectForm, clients: ClientBag) => {
-    console.log(data)
     try {
         const worker = await databaseHandler.project.play(data)
         const project = await databaseHandler.project.find(data.project.id)
@@ -76,7 +75,6 @@ const play = async (socket: Socket, data: PlayProjectForm, clients: ClientBag) =
 }
 
 const stop = async (socket: Socket, time: Time, clients: ClientBag) => {
-    console.log(time)
     try {
         const updated_time = await databaseHandler.project.stop(time)
         if (updated_time.worker_id) {
