@@ -69,18 +69,14 @@ const update = async (socket: Socket, data: any) => {
   }
 };
 
-const status = (
-  socket: Socket,
-  user: User & { status: number },
-  clients: ClientBag
-) => {
-  const io = getIoInstance();
-  const client = clients.get(socket);
-  if (client) {
-    clients.update(client, user);
-    io.emit("user:status:update", user);
-    prisma.log.status(user, user.status);
-  }
-};
+const status = (socket: Socket, user: User & { status: number; roles: Role[] }, clients: ClientBag) => {
+    const io = getIoInstance()
+    const client = clients.get(socket)
+    if (client) {
+        clients.update(client, user)
+        io.emit("user:status:update", user)
+        prisma.log.status(user, user.status)
+    }
+}
 
 export default { logout, newUser, update, status };
