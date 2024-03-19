@@ -66,7 +66,7 @@ const add = (client: Client) => {
     clientList.push(client)
 }
 
-const update = (client: Client, user: User & { status: number }) =>
+const update = (client: Client, user: User & { status: number; roles: Role[] }) =>
     (clientList = [...clientList.filter((item) => item.socket != client.socket), { ...client, user }])
 
 const clients: ClientBag = {

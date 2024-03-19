@@ -3,14 +3,15 @@ import { Socket } from "socket.io"
 import { cleanCoffeeList, clientList, coffeeList, getIoInstance } from "./socket"
 
 const getCoffeeUsers = () => {
-    const users = clientList.map((item) => item.user).filter((user) => user.status == 1)
-    const interns: User[] = []
+    const users = clientList.map((item) => item.user).filter((user) => user.status == 1 && user.roles.find((role) => role.tag == "café"))
+
+    const interns = users.filter((user) => user.roles.find((role) => role.tag == "estagiário"))
 
     // users.map(user => {
     //     // if (user)
     // })
 
-    return users
+    return [...users, ...interns, ...interns]
 }
 
 const getCoffeeMaker = () => {
