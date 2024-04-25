@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express"
 import { PrismaClient } from "@prisma/client"
 import { WhatsappApiForm, WhatsappForm } from "../definitions/WhatsappForm"
-import { api as zapApi } from "../api/whatsapp"
+import { api as zapApi } from "../api/whatsapp/whatsapp"
 import { AxiosError } from "axios"
 
 const router = express.Router()
@@ -37,9 +37,9 @@ router.post("/", async (request: Request, response: Response) => {
         const form: WhatsappApiForm = {
             messaging_product: "whatsapp",
             template: {
-                language: { code: "en_US" },
+                language: { code: data.language },
                 name: data.template,
-                // name: "dia_das_maes_bongrano_msg_1",
+                components: data.components,
             },
             type: "template",
             to: "+55" + data.number.toString().replace(/\D/g, ""),
