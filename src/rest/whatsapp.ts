@@ -1,6 +1,9 @@
 import express, { Express, Request, Response } from "express"
 import { PrismaClient } from "@prisma/client"
-import whatsapp from "../chat/whatsapp"
+import { WhatsappApiForm, WhatsappForm } from "../definitions/WhatsappForm"
+import { api as zapApi } from "../api/whatsapp"
+import { AxiosError } from "axios"
+
 const router = express.Router()
 const prisma = new PrismaClient()
 
@@ -12,17 +15,44 @@ export const getNumbers = (original_number: string | number) => {
     return [number, number2]
 }
 
+// router.post("/", async (request: Request, response: Response) => {
+//     const ready = await whatsapp.client.getState()
+//     if (ready) {
+//         const data = request.body
+//         const [number, number2] = getNumbers(data.number)
+
+//         const message = await whatsapp.client.sendMessage(number, data.message, { linkPreview: true })
+//         const message2 = await whatsapp.client.sendMessage(number2, data.message, { linkPreview: true })
+//         // const signing = await prisma.contracts.findFirst({where: {phone: data.number}, orderBy:{id:"desc"}}) || await prisma.users.findFirst({where: {phone: data.number}})
+
+//         response.json({ message, message2 })
+//     }
+// })
+
 router.post("/", async (request: Request, response: Response) => {
-    const ready = await whatsapp.client.getState()
-    if (ready) {
-        const data = request.body
-        const [number, number2] = getNumbers(data.number)
+    const data = request.body as WhatsappForm
 
-        const message = await whatsapp.client.sendMessage(number, data.message, { linkPreview: true })
-        const message2 = await whatsapp.client.sendMessage(number2, data.message, { linkPreview: true })
-        // const signing = await prisma.contracts.findFirst({where: {phone: data.number}, orderBy:{id:"desc"}}) || await prisma.users.findFirst({where: {phone: data.number}})
-
-        response.json({ message, message2 })
+    try {
+        console.log(data)
+        const form: WhatsappApiForm = {
+            messaging_product: "whatsapp",
+            template: {
+                language: { code: "en_US" },
+                name: data.template,
+                // name: "dia_das_maes_bongrano_msg_1",
+            },
+            type: "template",
+            to: "+55" + data.number.toString().replace(/\D/g, ""),
+        }
+        const whatsapp_response = await zapApi.post("/messages", form)
+        console.log(whatsapp_response.data)
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.log(error.response?.data)
+        } else {
+            console.log(error)
+        }
+        response.status(500).send(error)
     }
 })
 
