@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express"
 import { PrismaClient } from "@prisma/client"
 import { WhatsappApiForm, WhatsappForm } from "../definitions/WhatsappForm"
-import { api as zapApi } from "../api/whatsapp/whatsapp"
+import { addMessageToStack, api as zapApi } from "../api/whatsapp/whatsapp"
 import { AxiosError } from "axios"
 
 const router = express.Router()
@@ -33,20 +33,9 @@ router.post("/", async (request: Request, response: Response) => {
     const data = request.body as WhatsappForm
 
     try {
-        console.log(data)
-        const form: WhatsappApiForm = {
-            messaging_product: "whatsapp",
-            template: {
-                language: { code: data.language },
-                name: data.template,
-                components: data.components,
-            },
-            type: "template",
-            to: "+55" + data.number.toString().replace(/\D/g, ""),
-        }
-        const whatsapp_response = await zapApi.post("/messages", form)
-        console.log(whatsapp_response.data)
-        response.json(whatsapp_response.data)
+        const new_message_index = addMessageToStack(data)
+        console.log({ queued_message_number: data.number, template: data.template, new_message_index })
+        response.json(new_message_index)
     } catch (error) {
         if (error instanceof AxiosError) {
             console.log(error.response?.data)
