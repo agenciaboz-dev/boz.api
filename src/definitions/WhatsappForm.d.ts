@@ -3,7 +3,13 @@ export interface WhatsappForm {
     name: string
     template: string
     language: "en_US" | "pt_BR"
-    components: WhatsappTemplateComponent[]
+    components?: WhatsappTemplateComponent[]
+}
+
+export interface WhatsappMedia {
+    id?: string
+    link?: string
+    caption?: string
 }
 
 export interface WhatsappTemplateParams {
@@ -11,9 +17,9 @@ export interface WhatsappTemplateParams {
     text?: string
     currency?: string
     date_time?: string
-    image?: string
-    document?: string
-    video?: string
+    image?: WhatsappMedia
+    video?: WhatsappMedia
+    document?: WhatsappMedia
 }
 
 export interface WhatsappTemplateComponent {
@@ -30,6 +36,6 @@ export interface WhatsappApiForm {
         language: {
             code: "en_US" | "pt_BR"
         }
-        components: WhatsappTemplateComponent[]
+        components?: WhatsappTemplateComponent[]
     }
 }

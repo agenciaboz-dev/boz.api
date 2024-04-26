@@ -46,12 +46,42 @@ router.post("/", async (request: Request, response: Response) => {
         }
         const whatsapp_response = await zapApi.post("/messages", form)
         console.log(whatsapp_response.data)
+        response.json(whatsapp_response.data)
     } catch (error) {
         if (error instanceof AxiosError) {
             console.log(error.response?.data)
         } else {
             console.log(error)
         }
+        response.status(500).send(error)
+    }
+})
+
+router.get("/media_webhook", async (request: Request, response: Response) => {
+    const mode = request.query["hub.mode"]
+
+    if (mode == "subscribe") {
+        try {
+            const challenge = request.query["hub.challenge"]
+
+            response.status(200).send(challenge)
+        } catch (error) {
+            console.log(error)
+            response.status(500).send(error)
+        }
+    } else {
+        response.status(400).send("hub.mode should be subscribe")
+    }
+})
+
+router.post("/media_webhook", async (request: Request, response: Response) => {
+    const data = request.body
+
+    try {
+        console.log(JSON.stringify(data, null, 4))
+        response.status(200).send()
+    } catch (error) {
+        console.log(error)
         response.status(500).send(error)
     }
 })
