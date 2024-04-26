@@ -1,0 +1,51 @@
+enum Language {
+    en_US
+    pt_BR
+}
+
+enum ZapComponentType {
+    header
+    body
+    footer
+}
+
+enum ZapParamType {
+    text
+    currency
+    date_time
+    image
+    document
+    video
+}
+
+model ZapMessage {
+    id          Int                 @id @default(autoincrement())
+    number      String   
+    template    String
+    language    Language
+
+    components  ZapComponent[]
+}
+
+model ZapComponent {
+    id          Int                 @id @default(autoincrement())
+    type        ZapComponentType
+    parameters  ZapParam[]
+}
+
+model ZapParam {
+    id          Int         @id @default(autoincrement())
+    type        ZapParamType
+    text        String?
+    image       ZapMedia?
+    video       ZapMedia?
+    document    ZapMedia?
+}
+
+model ZapMedia {
+    uid          Int         @id @default(autoincrement())
+    id          String?
+    link        String?
+    caption     String?
+}
+
