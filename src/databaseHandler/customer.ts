@@ -1,8 +1,7 @@
 import { Customer, PrismaClient, Service } from "@prisma/client";
-import { NewCustomerForm } from "../definitions/NewCustomerForm";
+import { NewCustomerForm } from "../types/NewCustomerForm"
 import { include as project_inclusions } from "./project"
-
-const prisma = new PrismaClient();
+import { prisma } from "../prisma"
 
 const inclusions = {
     customer: {

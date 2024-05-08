@@ -1,7 +1,7 @@
 import { PrismaClient, User } from "@prisma/client";
 import { getIoInstance } from "../io/socket";
+import { prisma } from "../prisma"
 
-const prisma = new PrismaClient();
 
 const inclusions = {
   logs: { user: true },

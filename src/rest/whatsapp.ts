@@ -1,11 +1,11 @@
 import express, { Express, Request, Response } from "express"
-import { PrismaClient } from "@prisma/client"
-import { WhatsappApiForm, WhatsappForm } from "../definitions/WhatsappForm"
+import { WhatsappApiForm, WhatsappForm } from "../types/WhatsappForm"
 import { addMessageToStack, api as zapApi } from "../api/whatsapp/whatsapp"
 import { AxiosError } from "axios"
+import { MessageWebhook } from "../types/Meta/WhatsappBusiness/MessageWebhook"
+import { Nagazap } from "../class/Nagazap"
 
 const router = express.Router()
-const prisma = new PrismaClient()
 
 export const getNumbers = (original_number: string | number) => {
     const number = `55${original_number}@c.us`
@@ -29,6 +29,59 @@ export const getNumbers = (original_number: string | number) => {
 //     }
 // })
 
+router.get("/info", async (request: Request, response: Response) => {
+    try {
+        const nagazap = await Nagazap.get()
+        const info = await nagazap.getInfo()
+        response.json(info)
+    } catch (error) {
+        response.status(500).send(error)
+        if (error instanceof AxiosError) {
+            console.log(error.response?.data)
+        } else {
+            console.log(error)
+        }
+    }
+})
+
+router.get("/", async (request: Request, response: Response) => {
+    try {
+        const nagazap = await Nagazap.get()
+        response.json(nagazap)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
+router.patch("/token", async (request: Request, response: Response) => {
+    const data = request.body as { token: string }
+    console.log(data)
+    if (data.token) {
+        try {
+            const nagazap = await Nagazap.get()
+            await nagazap.updateToken(data.token)
+            response.json(nagazap)
+        } catch (error) {
+            console.log(error)
+            response.status(500).send(error)
+        }
+    } else {
+        response.status(400).send("missing token attribute")
+    }
+})
+
+router.get("/messages", async (request: Request, response: Response) => {
+    try {
+        const nagazap = await Nagazap.get()
+        const messages = await nagazap.getMessages()
+        response.json(messages)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 router.post("/", async (request: Request, response: Response) => {
     const data = request.body as WhatsappForm
 
@@ -42,6 +95,48 @@ router.post("/", async (request: Request, response: Response) => {
         } else {
             console.log(error)
         }
+        response.status(500).send(error)
+    }
+})
+
+router.get("/messages_webhook", async (request: Request, response: Response) => {
+    const mode = request.query["hub.mode"]
+
+    if (mode == "subscribe") {
+        try {
+            const challenge = request.query["hub.challenge"]
+
+            response.status(200).send(challenge)
+        } catch (error) {
+            console.log(error)
+            response.status(500).send(error)
+        }
+    } else {
+        response.status(400).send("hub.mode should be subscribe")
+    }
+})
+
+router.post("/messages_webhook", async (request: Request, response: Response) => {
+    try {
+        const nagazap = await Nagazap.get()
+        const data = request.body as MessageWebhook
+        data.entry.forEach(async (entry) => {
+            entry.changes.forEach(async (change) => {
+                if (change.field !== "messages") return
+                change.value.messages.forEach(async (message) => {
+                    console.log(message)
+                    nagazap.saveMessage({
+                        from: message.from.slice(2),
+                        text: message.text.body,
+                        timestamp: message.timestamp,
+                        name: change.value.contacts[0].profile?.name || "",
+                    })
+                })
+            })
+        })
+        response.status(200).send()
+    } catch (error) {
+        console.log(error)
         response.status(500).send(error)
     }
 })

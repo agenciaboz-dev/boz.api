@@ -4,8 +4,8 @@ import {
   TesterRequest,
   TestarEvent,
 } from "@prisma/client";
+import { prisma } from "../prisma"
 
-const prisma = new PrismaClient();
 
 const inclusions = {
   apiTester: { requests: true, events: true, creator: true },

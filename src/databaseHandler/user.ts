@@ -1,7 +1,7 @@
 import { PrismaClient, Time, User } from "@prisma/client"
 import project from "./project"
+import { prisma } from "../prisma"
 
-const prisma = new PrismaClient()
 
 export const inclusions = {
     user: {

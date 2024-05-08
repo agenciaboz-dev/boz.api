@@ -1,6 +1,6 @@
 import { PrismaClient, User, Warning } from "@prisma/client";
+import { prisma } from "../prisma"
 
-const prisma = new PrismaClient();
 
 const inclusions = {
   warning: { creator: true, confirmed: true },

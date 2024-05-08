@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { Client, ClientBag } from "../definitions/client";
+import { Client, ClientBag } from "../types/client"
 import { Customer, PrismaClient, Role, Service, Time, User } from "@prisma/client"
 import user from "./user"
 // import zap from "./zap"
@@ -18,9 +18,10 @@ import warning from "./warning"
 import wakeup from "./wakeup"
 // import theme from "./theme";
 import project from "./project"
-import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
-import { NewProjectForm, PlayProjectForm } from "../definitions/NewProjectForm"
+import { UpdateProjectForm } from "../types/UpdateProjectForm"
+import { NewProjectForm, PlayProjectForm } from "../types/NewProjectForm"
 import databaseHandler from "../databaseHandler"
+import { prisma } from "../prisma";
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -83,7 +84,6 @@ const clients: ClientBag = {
 const cleanWorkingProjects = async () => {
     const doubleCheck = async (time: Time) =>
         await prisma.time.findUnique({ where: { id: time.id, ended: null, NOT: { worker: null } }, include: { worker: true } })
-    const prisma = new PrismaClient()
     const working = await prisma.time.findMany({ where: { ended: null, NOT: { worker_id: null } } })
     working.forEach(async (time) => {
         const user = await databaseHandler.user.find.worker(time.worker_id!)

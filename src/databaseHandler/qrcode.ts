@@ -1,8 +1,8 @@
 import { Customer, PrismaClient, QrCode, User } from "@prisma/client";
 import { getIoInstance } from "../io/socket";
-import { NewQrCodeForm } from "../definitions/NewQrCodeForm";
+import { NewQrCodeForm } from "../types/NewQrCodeForm"
+import { prisma } from "../prisma"
 
-const prisma = new PrismaClient();
 
 const inclusions = {
   qrcode: { user: true, customer: true },

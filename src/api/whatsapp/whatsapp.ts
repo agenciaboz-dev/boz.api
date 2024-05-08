@@ -1,9 +1,9 @@
 import axios, { AxiosError } from "axios"
-import { WhatsappApiForm, WhatsappForm } from "../../definitions/WhatsappForm"
+import { WhatsappApiForm, WhatsappForm } from "../../types/WhatsappForm"
 import { writeFileSync } from "fs"
 
 const MAX_MESSAGES_BATCH = 50
-const INTERVAL = 1000 * 60 * 60
+const INTERVAL = 1000 * 60 * 30
 // const INTERVAL = 20 * 1000
 
 const token =

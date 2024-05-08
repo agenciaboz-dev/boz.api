@@ -1,6 +1,6 @@
 import { Role, User } from "@prisma/client"
 import { Socket } from "socket.io"
-import { ClientBag } from "../definitions/client"
+import { ClientBag } from "../types/client"
 import databaseHandler from "../databaseHandler"
 import { coffeeList, getIoInstance } from "./socket"
 import github from "../github"

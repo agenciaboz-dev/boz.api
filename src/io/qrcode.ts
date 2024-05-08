@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { NewQrCodeForm } from "../definitions/NewQrCodeForm";
+import { NewQrCodeForm } from "../types/NewQrCodeForm"
 import databaseHandler from "../databaseHandler";
 import { Customer, QrCode, User } from "@prisma/client";
 

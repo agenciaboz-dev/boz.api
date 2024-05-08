@@ -1,9 +1,9 @@
 import { Socket } from "socket.io"
 import databaseHandler from "../databaseHandler"
 import { Time } from "@prisma/client"
-import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
-import { ClientBag } from "../definitions/client"
-import { NewProjectForm, PlayProjectForm } from "../definitions/NewProjectForm"
+import { UpdateProjectForm } from "../types/UpdateProjectForm"
+import { ClientBag } from "../types/client"
+import { NewProjectForm, PlayProjectForm } from "../types/NewProjectForm"
 
 const create = async (socket: Socket, data: NewProjectForm) => {
     try {

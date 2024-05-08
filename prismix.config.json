@@ -12,7 +12,8 @@
                 "prisma/models/statuslog.prisma",
                 "prisma/models/user.prisma",
                 "prisma/models/wakeup.prisma",
-                "prisma/models/warning.prisma"
+                "prisma/models/warning.prisma",
+                "prisma/models/nagazap.prisma"
             ],
             "output": "prisma/schema.prisma"
         }

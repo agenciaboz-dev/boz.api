@@ -2,9 +2,9 @@ import express, { Express, Request, Response } from "express";
 import databaseHandler from "../databaseHandler";
 import { getIoInstance } from "../io/socket";
 import { PrismaClient } from "@prisma/client"
+import { prisma } from "../prisma"
 
-const router = express.Router();
-const prisma = new PrismaClient()
+const router = express.Router()
 
 router.get("/new", async (request: Request, response: Response) => {
   response.json({ success: true });

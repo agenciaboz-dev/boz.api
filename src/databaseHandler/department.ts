@@ -1,6 +1,6 @@
 import { Department, PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma"
 
-const prisma = new PrismaClient();
 
 const inclusions = {
   department: {},

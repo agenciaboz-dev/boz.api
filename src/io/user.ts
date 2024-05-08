@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { ClientBag } from "../definitions/client";
+import { ClientBag } from "../types/client"
 import { PrismaClient, Role, User } from "@prisma/client"
 import { saveImage } from "../saveImage";
 import databaseHandler from "../databaseHandler";

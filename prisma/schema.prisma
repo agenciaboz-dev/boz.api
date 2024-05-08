@@ -169,3 +169,18 @@ model Comment {
 	warningId Int? 
 	warning Warning? @relation(name: "CommentToWarning", fields: [warningId], references: [id], onDelete: Cascade)
 }
+model Nagazap {
+	id Int @id @default(autoincrement())
+	token String @db.Text
+	lastUpdated String @default("0")
+	appId String @default("317842821120983")
+	phoneId String @default("306058415918366")
+	bussinessId String @default("322633224256919")
+}
+model NagazapMessage {
+	id Int @id @default(autoincrement())
+	name String 
+	from String 
+	timestamp String 
+	text String @db.Text
+}

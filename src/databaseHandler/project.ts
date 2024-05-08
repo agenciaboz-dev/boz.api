@@ -1,8 +1,8 @@
 import { PrismaClient, Time } from "@prisma/client"
-import { UpdateProjectForm } from "../definitions/UpdateProjectForm"
-import { NewProjectForm, PlayProjectForm } from "../definitions/NewProjectForm"
+import { UpdateProjectForm } from "../types/UpdateProjectForm"
+import { NewProjectForm, PlayProjectForm } from "../types/NewProjectForm"
+import { prisma } from "../prisma"
 
-const prisma = new PrismaClient()
 
 const list = async () => await prisma.project.findMany({ include })
 const worker_include = { times: true, user: true }
