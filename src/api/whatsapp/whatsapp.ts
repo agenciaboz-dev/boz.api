@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios"
-import { WhatsappApiForm, WhatsappForm } from "../../types/WhatsappForm"
+import { WhatsappApiForm, WhatsappForm } from "../../types/shared/Meta/WhatsappBusiness/WhatsappForm"
 import { writeFileSync } from "fs"
 
 const MAX_MESSAGES_BATCH = 50
@@ -56,6 +56,9 @@ const sendNextMessage = async () => {
                 writeFileSync("whatsapp_error.log", log, { flag: "a+" })
             } else {
                 console.log(error)
+                if (error instanceof AxiosError) {
+                    console.log(error.response?.data)
+                }
             }
         }
     }

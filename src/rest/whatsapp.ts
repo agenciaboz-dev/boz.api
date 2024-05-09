@@ -1,9 +1,12 @@
 import express, { Express, Request, Response } from "express"
-import { WhatsappApiForm, WhatsappForm } from "../types/WhatsappForm"
+import { OvenForm, WhatsappApiForm, WhatsappForm, WhatsappTemplateComponent } from "../types/shared/Meta/WhatsappBusiness/WhatsappForm"
 import { addMessageToStack, api as zapApi } from "../api/whatsapp/whatsapp"
 import { AxiosError } from "axios"
-import { MessageWebhook } from "../types/Meta/WhatsappBusiness/MessageWebhook"
+import { MessageWebhook } from "../types/shared/Meta/WhatsappBusiness/MessageWebhook"
 import { Nagazap } from "../class/Nagazap"
+import { UploadedFile } from "express-fileupload"
+import { saveFile } from "../tools/saveFile"
+import { sleep } from "sleep"
 
 const router = express.Router()
 
@@ -34,6 +37,21 @@ router.get("/info", async (request: Request, response: Response) => {
         const nagazap = await Nagazap.get()
         const info = await nagazap.getInfo()
         response.json(info)
+    } catch (error) {
+        response.status(500).send(error)
+        if (error instanceof AxiosError) {
+            console.log(error.response?.data)
+        } else {
+            console.log(error)
+        }
+    }
+})
+
+router.get("/templates", async (request: Request, response: Response) => {
+    try {
+        const nagazap = await Nagazap.get()
+        const templates = await nagazap.getTemplates()
+        response.json(templates)
     } catch (error) {
         response.status(500).send(error)
         if (error instanceof AxiosError) {
@@ -166,6 +184,39 @@ router.post("/media_webhook", async (request: Request, response: Response) => {
         response.status(200).send()
     } catch (error) {
         console.log(error)
+        response.status(500).send(error)
+    }
+})
+
+router.post("/oven", async (request: Request, response: Response) => {
+    try {
+        const nagazap = await Nagazap.get()
+        let image_id = ""
+
+        const data = JSON.parse(request.body.data) as OvenForm
+        console.log(data)
+        if (!data.template) {
+            response.status(400).send("template is required")
+            return
+        }
+
+        if (request.files) {
+            const file = request.files.file as UploadedFile
+            file.name = file.name.replace(/[\s\/\\?%*:|"<>]+/g, "-").trim()
+            const uploaded = saveFile("nagazap/image", { name: file.name, file: file.data }, async () => {
+                image_id = await nagazap.uploadMedia(file, uploaded.filepath)
+                await nagazap.prepareOven(data, image_id)
+                response.send("teste")
+            })
+        } else {
+            await nagazap.prepareOven(data, image_id)
+            response.send("teste")
+        }
+    } catch (error) {
+        console.log(error)
+        if (error instanceof AxiosError) {
+            console.log(error.response?.data)
+        }
         response.status(500).send(error)
     }
 })

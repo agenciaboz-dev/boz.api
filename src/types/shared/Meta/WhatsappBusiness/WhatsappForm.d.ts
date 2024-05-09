@@ -1,6 +1,7 @@
+import { TemplateInfo } from "./TemplatesInfo"
+
 export interface WhatsappForm {
     number: string
-    name: string
     template: string
     language: "en_US" | "pt_BR"
     components?: WhatsappTemplateComponent[]
@@ -10,6 +11,7 @@ export interface WhatsappMedia {
     id?: string
     link?: string
     caption?: string
+    upload?: File
 }
 
 export interface WhatsappTemplateParams {
@@ -38,4 +40,9 @@ export interface WhatsappApiForm {
         }
         components?: WhatsappTemplateComponent[]
     }
+}
+
+export interface OvenForm {
+    to: string[]
+    template: TemplateInfo | null
 }

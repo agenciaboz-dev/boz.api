@@ -10,6 +10,8 @@ import fs from "fs"
 import { Server } from "socket.io"
 import { getIoInstance, handleSocket, initializeIoServer } from "./src/io/socket"
 import whatsapp from "./src/chat/whatsapp"
+import fileUpload from "express-fileupload"
+import { setProd } from "./src/tools/env"
 
 dotenv.config()
 
@@ -20,6 +22,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
+app.use(fileUpload())
 app.use("/api", router)
 app.use("/static", express.static("static"))
 
@@ -43,6 +46,7 @@ try {
     })
 
     server.listen(port, () => {
+        setProd()
         console.log(`[server]: Server is running at https://${port}`)
     })
 } catch (e) {

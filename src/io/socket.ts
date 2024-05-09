@@ -120,7 +120,6 @@ export const handleSocket = (socket: Socket) => {
         console.log({ reason })
         const client = clients.get(socket)
 
-
         if (client) {
             cleanWorkingProjects()
             user.logout(socket, clients, client.user)
@@ -137,6 +136,7 @@ export const handleSocket = (socket: Socket) => {
 
     socket.on("user:new", (newUser: User & { roles: Role[] }) => user.newUser(socket, newUser))
     socket.on("user:update", (data: User & { roles: Role[] }) => user.update(socket, data))
+    // @ts-ignore
     socket.on("user:status:update", (data: User & { status: number }) => user.status(socket, data, clients))
 
     socket.on("customer:new", (data) => customer.create(socket, data))

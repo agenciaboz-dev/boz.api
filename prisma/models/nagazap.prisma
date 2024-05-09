@@ -10,6 +10,7 @@ model Nagazap {
     appId       String      @default("317842821120983")
     phoneId     String      @default("306058415918366")
     bussinessId String      @default("322633224256919")
+    stack       String      @db.Text @default("[]")
 }
 
 model NagazapMessage {
