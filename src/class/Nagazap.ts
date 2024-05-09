@@ -154,7 +154,7 @@ export class Nagazap {
         }
     }
 
-    async prepareOven(data: OvenForm, image_id = "") {
+    async prepareBatch(data: OvenForm, image_id = "") {
         const forms: WhatsappForm[] = data.to.map((number) => {
             return {
                 number,
@@ -173,6 +173,7 @@ export class Nagazap {
         })
 
         forms.forEach(async (message) => {
+            // replace this with the method for adding to stack instead of immediatly sending the message
             await this.sendMessage(message)
         })
     }
