@@ -41,6 +41,8 @@ export class Nagazap {
     bussinessId: string
     lastUpdated: string
     stack: WhatsappForm[]
+    frequency: string
+    batchSize: number
 
     static async get() {
         const data = await prisma.nagazap.findFirst()
@@ -58,6 +60,8 @@ export class Nagazap {
         this.bussinessId = data.bussinessId
         this.lastUpdated = data.lastUpdated
         this.stack = JSON.parse(data.stack)
+        this.frequency = data.frequency
+        this.batchSize = data.batchSize
     }
 
     async getMessages() {
@@ -176,5 +180,11 @@ export class Nagazap {
             // replace this with the method for adding to stack instead of immediatly sending the message
             await this.sendMessage(message)
         })
+    }
+
+    async updateOvenSettings(data: { batchSize?: number; frequency?: string }) {
+        const updated = await prisma.nagazap.update({ where: { id: this.id }, data })
+        this.batchSize = updated.batchSize
+        this.frequency = updated.frequency
     }
 }

@@ -221,4 +221,17 @@ router.post("/oven", async (request: Request, response: Response) => {
     }
 })
 
+router.patch("/", async (request: Request, response: Response) => {
+    const data = request.body as { batchSize?: number; frequency?: string }
+
+    try {
+        const nagazap = await Nagazap.get()
+        await nagazap.updateOvenSettings(data)
+        response.json(nagazap)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 export default router
