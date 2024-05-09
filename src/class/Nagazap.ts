@@ -237,7 +237,7 @@ export class Nagazap {
     }
 
     async bake() {
-        for (let i = 0; i <= this.batchSize; i++) {
+        for (let i = 1; i <= this.batchSize; i++) {
             const message = this.stack.shift()
             if (message) {
                 await this.sendMessage(message)
