@@ -138,10 +138,10 @@ router.post("/messages_webhook", async (request: Request, response: Response) =>
     try {
         const nagazap = await Nagazap.get()
         const data = request.body as MessageWebhook
-        data.entry.forEach(async (entry) => {
-            entry.changes.forEach(async (change) => {
+        data.entry?.forEach(async (entry) => {
+            entry.changes?.forEach(async (change) => {
                 if (change.field !== "messages") return
-                change.value.messages.forEach(async (message) => {
+                change.value.messages?.forEach(async (message) => {
                     console.log(message)
                     nagazap.saveMessage({
                         from: message.from.slice(2),
