@@ -48,6 +48,7 @@ try {
 
     server.listen(port, () => {
         setProd()
+        setInterval(() => Nagazap.shouldBake(), 1 * 5 * 1000)
         console.log(`[server]: Server is running at https://${port}`)
     })
 } catch (e) {
@@ -63,6 +64,4 @@ try {
     server.listen(port, () => {
         console.log(`[server]: Server is running at http://${port}`)
     })
-} finally {
-    setInterval(() => Nagazap.shouldBake(), 1 * 5 * 1000)
 }

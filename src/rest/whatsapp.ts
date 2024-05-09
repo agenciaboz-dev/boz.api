@@ -234,4 +234,17 @@ router.patch("/", async (request: Request, response: Response) => {
     }
 })
 
+router.delete("/blacklist", async (request: Request, response: Response) => {
+    const data = request.body as { number: string }
+
+    try {
+        const nagazap = await Nagazap.get()
+        await nagazap.removeFromBlacklist(data.number)
+        response.json(nagazap)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 export default router

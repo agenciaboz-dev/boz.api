@@ -125,9 +125,17 @@ export class Nagazap {
     }
 
     async addToBlacklist(number: string) {
+        if (this.blacklist.includes(number)) return
         this.blacklist.push(number)
         await prisma.nagazap.update({ where: { id: this.id }, data: { blacklist: JSON.stringify(this.blacklist) } })
-        console.log(`número ${number} adicionado ao blacklist`)
+        console.log(`número ${number} adicionado a blacklist`)
+    }
+
+    async removeFromBlacklist(number: string) {
+        if (!this.blacklist.includes(number)) return
+        this.blacklist = this.blacklist.filter(item => item != number)
+        await prisma.nagazap.update({ where: { id: this.id }, data: { blacklist: JSON.stringify(this.blacklist) } })
+        console.log(`número ${number} removido da blacklist`)
     }
 
     async queueMessage(data: WhatsappForm) {
@@ -229,7 +237,7 @@ export class Nagazap {
     }
 
     async bake() {
-        for (let i = 0; i <= this.stack.length; i++) {
+        for (let i = 0; i <= this.batchSize; i++) {
             const message = this.stack.shift()
             if (message) {
                 await this.sendMessage(message)
