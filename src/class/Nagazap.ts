@@ -41,6 +41,7 @@ export class Nagazap {
     bussinessId: string
     lastUpdated: string
     stack: WhatsappForm[]
+    blacklist: string[]
     frequency: string
     batchSize: number
     lastMessageTime: string
@@ -74,6 +75,7 @@ export class Nagazap {
         this.bussinessId = data.bussinessId
         this.lastUpdated = data.lastUpdated
         this.stack = JSON.parse(data.stack)
+        this.blacklist = JSON.parse(data.blacklist)
         this.frequency = data.frequency
         this.batchSize = data.batchSize
         this.lastMessageTime = data.lastMessageTime
@@ -115,7 +117,17 @@ export class Nagazap {
         const message = new NagaMessage(prisma_message)
         const io = getIoInstance()
         io.emit("nagazap:message", message)
+
+        if (message.text.toLowerCase() == "parar promoções") {
+            this.addToBlacklist(message.from)
+        }
         return message
+    }
+
+    async addToBlacklist(number: string) {
+        this.blacklist.push(number)
+        await prisma.nagazap.update({ where: { id: this.id }, data: { blacklist: JSON.stringify(this.blacklist) } })
+        console.log(`número ${number} adicionado ao blacklist`)
     }
 
     async queueMessage(data: WhatsappForm) {
@@ -150,6 +162,12 @@ export class Nagazap {
     }
 
     async sendMessage(message: WhatsappForm) {
+        const number = message.number.toString().replace(/\D/g, "")
+        if (this.blacklist.includes(number.length == 10 ? number : number.slice(0, 2) + number.slice(3))) {
+            console.log(`mensagem não enviada para ${number} pois está na blacklist`)
+            return
+        }
+
         const form: WhatsappApiForm = {
             messaging_product: "whatsapp",
             template: {
@@ -158,7 +176,7 @@ export class Nagazap {
                 components: message.components,
             },
             type: "template",
-            to: "+55" + message.number.toString().replace(/\D/g, ""),
+            to: "+55" + number,
         }
 
         try {

@@ -177,6 +177,7 @@ model Nagazap {
 	phoneId String @default("306058415918366")
 	bussinessId String @default("322633224256919")
 	stack String @default("[]") @db.Text
+	blacklist String @default("[]") @db.Text
 	frequency String @default("10000")
 	batchSize Int @default(1)
 	lastMessageTime String @default("0")
