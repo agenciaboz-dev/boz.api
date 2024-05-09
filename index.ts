@@ -12,6 +12,7 @@ import { getIoInstance, handleSocket, initializeIoServer } from "./src/io/socket
 import whatsapp from "./src/chat/whatsapp"
 import fileUpload from "express-fileupload"
 import { setProd } from "./src/tools/env"
+import { Nagazap } from "./src/class/Nagazap"
 
 dotenv.config()
 
@@ -62,4 +63,6 @@ try {
     server.listen(port, () => {
         console.log(`[server]: Server is running at http://${port}`)
     })
+} finally {
+    setInterval(() => Nagazap.shouldBake(), 1 * 5 * 1000)
 }

@@ -1,10 +1,10 @@
 import { Prisma } from "@prisma/client"
 import { prisma } from "../prisma"
 import axios, { AxiosError, AxiosInstance } from "axios"
-import { getIoInstance } from "../io"
 import { OvenForm, WhatsappApiForm, WhatsappForm, WhatsappTemplateComponent } from "../types/shared/Meta/WhatsappBusiness/WhatsappForm"
 import { UploadedFile } from "express-fileupload"
 import * as fs from "fs"
+import { getIoInstance } from "../io/socket"
 
 export type NagaMessagePrisma = Prisma.NagazapMessageGetPayload<{}>
 export type NagaMessageForm = Omit<Prisma.NagazapMessageGetPayload<{}>, "id">
@@ -43,6 +43,7 @@ export class Nagazap {
     stack: WhatsappForm[]
     frequency: string
     batchSize: number
+    lastMessageTime: string
 
     static async get() {
         const data = await prisma.nagazap.findFirst()
@@ -50,6 +51,19 @@ export class Nagazap {
 
         const nagazap = new Nagazap(data)
         return nagazap
+    }
+
+    static async shouldBake() {
+        try {
+            const nagazap = await Nagazap.get()
+            const lastTime = new Date(Number(nagazap.lastMessageTime))
+            const now = new Date()
+            if (now.getTime() >= lastTime.getTime() + Number(nagazap.frequency) && !!nagazap.stack.length) {
+                nagazap.bake()
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     constructor(data: NagazapPrisma) {
@@ -62,6 +76,7 @@ export class Nagazap {
         this.stack = JSON.parse(data.stack)
         this.frequency = data.frequency
         this.batchSize = data.batchSize
+        this.lastMessageTime = data.lastMessageTime
     }
 
     async getMessages() {
@@ -120,10 +135,6 @@ export class Nagazap {
         return templates
     }
 
-    async newOven(data: OvenForm) {
-        console.log(data)
-    }
-
     async uploadMedia(file: UploadedFile, filepath: string) {
         const response = await api.post(
             `/${this.phoneId}/media`,
@@ -178,7 +189,7 @@ export class Nagazap {
 
         forms.forEach(async (message) => {
             // replace this with the method for adding to stack instead of immediatly sending the message
-            await this.sendMessage(message)
+            await this.queueMessage(message)
         })
     }
 
@@ -186,5 +197,27 @@ export class Nagazap {
         const updated = await prisma.nagazap.update({ where: { id: this.id }, data })
         this.batchSize = updated.batchSize
         this.frequency = updated.frequency
+    }
+
+    async saveStack() {
+        this.lastMessageTime = new Date().getTime().toString()
+        const data = await prisma.nagazap.update({
+            where: { id: this.id },
+            data: { stack: JSON.stringify(this.stack), lastMessageTime: this.lastMessageTime },
+        })
+
+        const io = getIoInstance()
+        io.emit("nagazap:update", this)
+    }
+
+    async bake() {
+        for (let i = 0; i <= this.stack.length; i++) {
+            const message = this.stack.shift()
+            if (message) {
+                await this.sendMessage(message)
+            }
+        }
+
+        await this.saveStack()
     }
 }

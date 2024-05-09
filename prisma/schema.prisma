@@ -179,6 +179,7 @@ model Nagazap {
 	stack String @default("[]") @db.Text
 	frequency String @default("10000")
 	batchSize Int @default(1)
+	lastMessageTime String @default("0")
 }
 model NagazapMessage {
 	id Int @id @default(autoincrement())
