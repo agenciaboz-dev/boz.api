@@ -24,9 +24,10 @@ export interface MessageWebhook {
                                 from: string // remetente
                                 id: string
                                 timestamp: string // unix timestamp, multiply by 1000 to get javascript timestamp
-                                text: {
+                                text?: {
                                     body: string // message text
                                 }
+                                button?: { payload: string; text: string }
                                 type: "text"
                             }
                         ]

@@ -145,7 +145,7 @@ router.post("/messages_webhook", async (request: Request, response: Response) =>
                     console.log(message)
                     nagazap.saveMessage({
                         from: message.from.slice(2),
-                        text: message.text.body,
+                        text: message.text?.body || message.button?.text || "**ERRO**",
                         timestamp: message.timestamp,
                         name: change.value.contacts[0].profile?.name || "",
                     })
