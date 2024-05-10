@@ -15,6 +15,9 @@ model Nagazap {
     frequency   String      @default("10000")
     batchSize   Int         @default(1)
     lastMessageTime String  @default("0")
+    paused      Boolean     @default(false)
+    sentMessages    String  @db.Text @default("[]")
+    failedMessages    String  @db.Text @default("[]")
 }
 
 model NagazapMessage {

@@ -5,6 +5,7 @@ import { OvenForm, WhatsappApiForm, WhatsappForm, WhatsappTemplateComponent } fr
 import { UploadedFile } from "express-fileupload"
 import * as fs from "fs"
 import { getIoInstance } from "../io/socket"
+import { FailedMessageLog, SentMessageLog } from "../types/shared/Meta/WhatsappBusiness/Logs"
 
 export type NagaMessagePrisma = Prisma.NagazapMessageGetPayload<{}>
 export type NagaMessageForm = Omit<Prisma.NagazapMessageGetPayload<{}>, "id">
@@ -45,6 +46,9 @@ export class Nagazap {
     frequency: string
     batchSize: number
     lastMessageTime: string
+    paused: boolean
+    sentMessages: SentMessageLog[]
+    failedMessages: FailedMessageLog[]
 
     static async get() {
         const data = await prisma.nagazap.findFirst()
@@ -59,7 +63,7 @@ export class Nagazap {
             const nagazap = await Nagazap.get()
             const lastTime = new Date(Number(nagazap.lastMessageTime))
             const now = new Date()
-            if (now.getTime() >= lastTime.getTime() + Number(nagazap.frequency) && !!nagazap.stack.length) {
+            if (now.getTime() >= lastTime.getTime() + Number(nagazap.frequency) && !!nagazap.stack.length && !nagazap.paused) {
                 nagazap.bake()
             }
         } catch (error) {
@@ -79,6 +83,9 @@ export class Nagazap {
         this.frequency = data.frequency
         this.batchSize = data.batchSize
         this.lastMessageTime = data.lastMessageTime
+        this.paused = data.paused
+        this.sentMessages = JSON.parse(data.sentMessages)
+        this.failedMessages = JSON.parse(data.failedMessages)
     }
 
     async getMessages() {
@@ -91,6 +98,7 @@ export class Nagazap {
         const data = await prisma.nagazap.update({ where: { id: this.id }, data: { token, lastUpdated: new Date().getTime().toString() } })
         this.token = data.token
         this.lastUpdated = data.lastUpdated
+        this.emit()
     }
 
     buildHeaders(options?: BuildHeadersOptions) {
@@ -129,13 +137,15 @@ export class Nagazap {
         this.blacklist.push(number)
         await prisma.nagazap.update({ where: { id: this.id }, data: { blacklist: JSON.stringify(this.blacklist) } })
         console.log(`número ${number} adicionado a blacklist`)
+        this.emit()
     }
 
     async removeFromBlacklist(number: string) {
         if (!this.blacklist.includes(number)) return
-        this.blacklist = this.blacklist.filter(item => item != number)
+        this.blacklist = this.blacklist.filter((item) => item != number)
         await prisma.nagazap.update({ where: { id: this.id }, data: { blacklist: JSON.stringify(this.blacklist) } })
         console.log(`número ${number} removido da blacklist`)
+        this.emit()
     }
 
     async queueMessage(data: WhatsappForm) {
@@ -190,8 +200,14 @@ export class Nagazap {
         try {
             const whatsapp_response = await api.post(`/${this.phoneId}/messages`, form, { headers: this.buildHeaders() })
             console.log(whatsapp_response.data)
+            this.log(whatsapp_response.data)
         } catch (error) {
-            error instanceof AxiosError ? console.log(error.response?.data) : console.log(error)
+            if (error instanceof AxiosError) {
+                console.log(error.response?.data)
+                this.errorLog(error.response?.data, number)
+            } else {
+                console.log(error)
+            }
         }
     }
 
@@ -223,6 +239,7 @@ export class Nagazap {
         const updated = await prisma.nagazap.update({ where: { id: this.id }, data })
         this.batchSize = updated.batchSize
         this.frequency = updated.frequency
+        this.emit()
     }
 
     async saveStack() {
@@ -231,9 +248,7 @@ export class Nagazap {
             where: { id: this.id },
             data: { stack: JSON.stringify(this.stack), lastMessageTime: this.lastMessageTime },
         })
-
-        const io = getIoInstance()
-        io.emit("nagazap:update", this)
+        this.emit()
     }
 
     async bake() {
@@ -245,5 +260,40 @@ export class Nagazap {
         }
 
         await this.saveStack()
+    }
+
+    async pause() {
+        this.paused = true
+        await prisma.nagazap.update({ where: { id: this.id }, data: { paused: this.paused } })
+        this.emit()
+    }
+
+    async start() {
+        this.paused = false
+        await prisma.nagazap.update({ where: { id: this.id }, data: { paused: this.paused } })
+        this.emit()
+    }
+
+    async clearOven() {
+        this.stack = []
+        await prisma.nagazap.update({ where: { id: this.id }, data: { stack: JSON.stringify(this.stack) } })
+        this.emit()
+    }
+
+    async log(data: any) {
+        this.sentMessages.push({ timestamp: new Date().getTime().toString(), data })
+        await prisma.nagazap.update({ where: { id: this.id }, data: { sentMessages: JSON.stringify(this.sentMessages) } })
+        this.emit()
+    }
+
+    async errorLog(data: any, number: string) {
+        this.failedMessages.push({ timestamp: new Date().getTime().toString(), data, number })
+        await prisma.nagazap.update({ where: { id: this.id }, data: { failedMessages: JSON.stringify(this.failedMessages) } })
+        this.emit()
+    }
+
+    emit() {
+        const io = getIoInstance()
+        io.emit("nagazap:update", this)
     }
 }

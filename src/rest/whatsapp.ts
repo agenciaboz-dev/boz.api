@@ -247,4 +247,37 @@ router.delete("/blacklist", async (request: Request, response: Response) => {
     }
 })
 
+router.get("/pause", async (request: Request, response: Response) => {
+    try {
+        const nagazap = await Nagazap.get()
+        await nagazap.pause()
+        response.json(nagazap)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
+router.get("/start", async (request: Request, response: Response) => {
+    try {
+        const nagazap = await Nagazap.get()
+        await nagazap.start()
+        response.json(nagazap)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
+router.get("/clearOven", async (request: Request, response: Response) => {
+    try {
+        const nagazap = await Nagazap.get()
+        await nagazap.clearOven()
+        response.json(nagazap)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 export default router
