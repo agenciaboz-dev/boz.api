@@ -194,7 +194,7 @@ router.post("/oven", async (request: Request, response: Response) => {
         let image_id = ""
 
         const data = JSON.parse(request.body.data) as OvenForm
-        console.log(data)
+        console.log(`quantidade de contatos: ${data.to.length}`)
         if (!data.template) {
             response.status(400).send("template is required")
             return

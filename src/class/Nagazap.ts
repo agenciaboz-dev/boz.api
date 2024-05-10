@@ -148,13 +148,6 @@ export class Nagazap {
         this.emit()
     }
 
-    async queueMessage(data: WhatsappForm) {
-        this.stack.push(data)
-        await prisma.nagazap.update({ where: { id: this.id }, data: { stack: JSON.stringify(this.stack) } })
-
-        return this.stack
-    }
-
     async getTemplates() {
         const response = await api.get(`/${this.bussinessId}?fields=id,name,message_templates`, {
             headers: this.buildHeaders(),
@@ -211,6 +204,20 @@ export class Nagazap {
         }
     }
 
+    async queueMessage(data: WhatsappForm) {
+        this.stack.push(data)
+        await prisma.nagazap.update({ where: { id: this.id }, data: { stack: JSON.stringify(this.stack) } })
+
+        return this.stack
+    }
+
+    async queueBatch(data: WhatsappForm[]) {
+        this.stack = [...this.stack, ...data]
+        await prisma.nagazap.update({ where: { id: this.id }, data: { stack: JSON.stringify(this.stack) } })
+
+        return this.stack
+    }
+
     async prepareBatch(data: OvenForm, image_id = "") {
         const forms: WhatsappForm[] = data.to.map((number) => {
             return {
@@ -229,10 +236,7 @@ export class Nagazap {
             }
         })
 
-        forms.forEach(async (message) => {
-            // replace this with the method for adding to stack instead of immediatly sending the message
-            await this.queueMessage(message)
-        })
+        await this.queueBatch(forms)
     }
 
     async updateOvenSettings(data: { batchSize?: number; frequency?: string }) {
