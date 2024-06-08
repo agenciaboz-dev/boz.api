@@ -16,11 +16,15 @@ model Customer {
 	projects Project[] @relation(name: "CustomerToProject")
 	qrcodes QrCode[] @relation(name: "CustomerToQrCode")
 	services Service[] @relation(name: "CustomerToService")
+	warnings Warning[] @relation(name: "CustomerToWarning")
+	comments Comment[] @relation(name: "CommentToCustomer")
 }
 model Department {
 	id Int @id @default(autoincrement())
 	name String 
 	users User[] @relation(name: "DepartmentToUser")
+	warningId Int? 
+	warning Warning? @relation(name: "DepartmentToWarning", fields: [warningId], references: [id], onDelete: Cascade)
 }
 model User {
 	id Int @id @default(autoincrement())
@@ -157,6 +161,9 @@ model Warning {
 	date String 
 	creatorId Int 
 	creator User @relation(name: "UserToWarning", fields: [creatorId], references: [id], onDelete: Cascade)
+	customerId Int? 
+	customer Customer? @relation(name: "CustomerToWarning", fields: [customerId], references: [id], onDelete: Cascade)
+	departments Department[] @relation(name: "DepartmentToWarning")
 	confirmed User[] @relation(name: "confirmed")
 	comments Comment[] @relation(name: "CommentToWarning")
 }
@@ -168,6 +175,8 @@ model Comment {
 	user User @relation(name: "CommentToUser", fields: [userId], references: [id], onDelete: Cascade)
 	warningId Int? 
 	warning Warning? @relation(name: "CommentToWarning", fields: [warningId], references: [id], onDelete: Cascade)
+	customerId Int? 
+	customer Customer? @relation(name: "CommentToCustomer", fields: [customerId], references: [id], onDelete: Cascade)
 }
 model Nagazap {
 	id Int @id @default(autoincrement())

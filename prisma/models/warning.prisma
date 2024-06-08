@@ -10,16 +10,35 @@ model Warning {
     date            String
 
     creatorId       Int
-    creator         User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)        
+    creator         User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)     
+
+    customerId      Int?        
+    customer        Customer?     @relation(fields: [customerId],references: [id], onDelete:Cascade) 
+
+    departments     Department[]      
 
     confirmed       User[]      @relation(name: "confirmed")
+
     comments        Comment[]
+
 }
 
+model Department{
+    id              Int         @id @default(autoincrement())
+    warningId       Int?
+    warning         Warning?     @relation(fields: [warningId],references: [id],onDelete: Cascade)
+
+}
 model User {
     id         Int         @id @default(autoincrement())
     warnings        Warning[]
     confirmedWarnings   Warning[]   @relation(name: "confirmed")
+    comments        Comment[]
+
+}
+model Customer {
+    id         Int         @id @default(autoincrement())
+    warnings        Warning[]
     comments        Comment[]
 
 }
@@ -34,5 +53,8 @@ model Comment {
 
     warningId       Int?
     warning         Warning?    @relation(fields: [warningId], references: [id], onDelete: Cascade)
+
+    customerId      Int?        
+    customer        Customer?     @relation(fields: [customerId],references: [id], onDelete:Cascade)   
 
 }
